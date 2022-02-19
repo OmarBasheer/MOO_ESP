@@ -79,3 +79,5 @@ for x in positions:
     #print(x)
     for s in range(x[1], x[2][1]):
         print(s)
+
+        #Test
