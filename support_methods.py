@@ -26,6 +26,19 @@ def getAppliances():
         ['pf', 180, 900, 1440, 1 / 60]]
     return appliances
 
+def calculate_eb(appliances, price_per_min):
+    eb_sum=0
+    ps_list = []
+    ps_min = []
+    app_sum = 0
+    for appliance in appliances:  # Loop through all appliances
+        for minute in range(appliance[2][1]):  # Loop through durations of each appliance
+            ans, ps_list, ps_min = price_calculate(appliance[1] + minute,
+                                                   appliance[2][4], ps_list, ps_min,
+                                                   price_per_min)  # (starting time + current minute,
+            app_sum = app_sum + ans
+        eb_sum = eb_sum + app_sum
+    return eb_sum
 
 def getnsa():
     nsa = [['light', 0.6/60],['afan', 0.3/60], ['tfan', 0.8/60], ['iron', 1.5/60], ['toaser', 1/60], ['ccharger', 1.5/60],
@@ -86,3 +99,5 @@ def cpr_calc(ps_list, nsas):
 def uc_calculate(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
 
+def multiobjective(eb, par, wtr, cpr):
+    return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr

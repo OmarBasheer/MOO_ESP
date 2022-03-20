@@ -3,7 +3,6 @@ from support_methods import *
 import matplotlib.pyplot as plt
 import numpy
 import numpy as np
-import matplotlib
 from pymoo.algorithms.soo.nonconvex.pso import PSO, PSOAnimation
 from pymoo.factory import *
 from pymoo.optimize import minimize
@@ -45,19 +44,9 @@ ps_avg = Average(ps_max_list)
 # get price per minute list
 price_per_min = getPricePerMin()
 
-eb_sum = 0
-ps_list = []
-ps_min = []
-app_sum = 0
-## fix to have all of appliances
-for appliance in positions:  # Loop through all appliances
-    for minute in range(appliance[2][1]):  # Loop through durations of each appliance
-        ans, ps_list, ps_min = price_calculate(appliance[1] + minute,
-                                               appliance[2][4], ps_list, ps_min,
-                                               price_per_min)  # (starting time + current minute,
-        app_sum = app_sum + ans
-    eb_sum = eb_sum + app_sum
 
+## fix to have all of appliances
+eb_sum = calculate_eb(positions, price_per_min)
 
 # get consumption for each minute to test.
 consumption_mins = np.zeros(1441)
@@ -75,6 +64,8 @@ wtr_avg_val = wtr_calc(positions)
 nsas = getnsa()
 
 cpr_val = cpr_calc(consumption_mins, nsas)
+lastval = multiobjective(eb_sum, par_val, wtr_avg_val, cpr_val)
 print("PAR value: ", par_val)
 print("WTR Average time: ", wtr_avg_val)
 print("CPR value is: ", cpr_val)
+print("Last value is: ", lastval)
