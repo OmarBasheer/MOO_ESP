@@ -6,9 +6,7 @@ def Average(lst):
 
 def getAppliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
-        ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60],
-        ['ac', 30, 1, 120, 1.2 / 60],
-        ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
+        ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60],['ac', 30, 1, 120, 1.2 / 60], ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
         ['ac', 30, 480, 600, 1.2 / 60],
         ['ac', 30, 600, 720, 1.2 / 60], ['ac', 30, 720, 840, 1.2 / 60], ['ac', 30, 840, 960, 1.2 / 60],
         ['ac', 30, 960, 1080, 1.2 / 60],
@@ -24,17 +22,22 @@ def getAppliances():
         ['ewh', 35, 1100, 1440, 4 / 60],
         ['cm', 10, 300, 450, 1.5 / 60], ['cm', 10, 1020, 1140, 1.5 / 60], ['pf', 180, 1, 540, 1 / 60],
         ['pf', 180, 900, 1440, 1 / 60]]
-    return appliances
+    loc = np.array([105, 105, 105, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 55, 60, 1440, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 35, 35, 10, 10, 180, 180])
+    lb = np.array([540, 840, 1200, 1, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 60, 300, 1, 1, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 300, 1100, 300, 1020, 1, 900])
+    ub = np.array([780, 1080, 1440, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 300, 480, 1440, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 420, 1440, 450, 1140, 540, 1440])
+    cost = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
+    return loc, lb, ub, cost
 
 def calculate_eb(appliances, price_per_min):
     eb_sum=0
     ps_list = []
     ps_min = []
     app_sum = 0
+
     for appliance in appliances:  # Loop through all appliances
-        for minute in range(appliance[2][1]):  # Loop through durations of each appliance
+        for minute in range(appliance[2]):  # Loop through durations of each appliance
             ans, ps_list, ps_min = price_calculate(appliance[1] + minute,
-                                                   appliance[2][4], ps_list, ps_min,
+                                                   appliance[5], ps_list, ps_min,
                                                    price_per_min)  # (starting time + current minute,
             app_sum = app_sum + ans
         eb_sum = eb_sum + app_sum
@@ -79,8 +82,8 @@ def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
 def wtr_calc(lst):
     val1, val2 = 0, 0
     for appliance in lst:
-        val1 = val1 + (appliance[1] - appliance[2][2])
-        val2 = val2 + (appliance[2][3] - appliance[2][2] - appliance[2][1])
+        val1 = val1 + (appliance[1] - appliance[3])
+        val2 = val2 + (appliance[4] - appliance[3] - appliance[2])
     return val1 / val2
 
 # calculate CPR, get power consumption at all minutes & calculate accordingly
