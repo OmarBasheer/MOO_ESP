@@ -3,6 +3,14 @@ import numpy as np
 def Average(lst):
     return sum(lst) / len(lst)
 
+def getBill(x):
+    total = 0
+    loc, lb, ub, cost = getAppliances()
+    price = getPricePerMin()
+    for i in range(36):
+        for j in range(x[i], x[i]+loc[i]):
+            total += cost[i] * price[j]
+    return total
 
 def getAppliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
@@ -12,7 +20,7 @@ def getAppliances():
         ['ac', 30, 960, 1080, 1.2 / 60],
         ['ac', 30, 1080, 1200, 1.2 / 60], ['ac', 30, 1200, 1320, 1.2 / 60], ['ac', 30, 1320, 1440, 1.2 / 60],
         ['wm', 55, 60, 300, 1.15 / 60],
-        ['cd', 60, 300, 480, 5.4 / 60], ['ref', 1440, 0, 1440, 0.5 / 60], ['deh', 30, 1, 120, 0.65 / 60],
+        ['cd', 60, 300, 480, 5.4 / 60], ['ref', 1440, 0, 1439, 0.5 / 60], ['deh', 30, 1, 120, 0.65 / 60],
         ['deh', 30, 120, 240, 0.65 / 60],
         ['deh', 30, 240, 360, 0.65 / 60], ['deh', 30, 360, 480, 0.65 / 60], ['deh', 30, 480, 600, 0.65 / 60],
         ['deh', 30, 600, 720, 0.65 / 60],
@@ -32,38 +40,40 @@ def calculate_eb(appliances, price_per_min):
     eb_sum=0
     ps_list = []
     ps_min = []
-    app_sum = 0
-
+    app_sum=0
+    c = 0.0333
+    l = 1.543
     for appliance in appliances:  # Loop through all appliances
         for minute in range(appliance[2]):  # Loop through durations of each appliance
-            ans, ps_list, ps_min = price_calculate(appliance[1] + minute,
-                                                   appliance[5], ps_list, ps_min,
-                                                   price_per_min)  # (starting time + current minute,
-            app_sum = app_sum + ans
-        eb_sum = eb_sum + app_sum
+            if appliance[5] > c:
+                app_sum = app_sum + ((price_per_min[appliance[1] + minute] * l) * appliance[5])
+            else:
+                app_sum = app_sum + (price_per_min[appliance[1] + minute] * appliance[5])
+        eb_sum += app_sum
     return eb_sum
 
 def getnsa():
-    nsa = [['light', 0.6/60],['afan', 0.3/60], ['tfan', 0.8/60], ['iron', 1.5/60], ['toaser', 1/60], ['ccharger', 1.5/60],
-           ['cleaner', 1.5/60], ['tv', 0.3/60], ['hairdryer', 1.2/60], ['hand drill', 0.6/60], ['water pump', 2.5/60],
-           ['blender', 0.3/60], ['microwave', 1.18/60], ['e vehicle', 1/60]]
-    return nsa
+    ns = ['light','afan', 'tfan','iron','toaser', 'ccharger',
+           'cleaner', 'tv', 'hairdryer', 'hand drill', 'water pump',
+           'blender', 'microwave', 'e vehicle']
+    pns = np.array([0.6/60, 0.3/60, 0.8/60, 1.5/60, 2/60, 1.5/60, 1.5/60, 1.5/60, 0.3/60, 1.2/60, 0.6/60, 2.5/60, 0.3/60, 1.18/60, 1/60])
+    return ns, pns
 
 
 def getPricePerMin():
-    price_per_min = np.zeros(1440)
+    price_per_min = np.zeros(1442)
     price_per_min[0:61], price_per_min[61:121], price_per_min[121:181], price_per_min[
-                                                                        181:241] = 0.028, 0.023, 0.018, 0.013
+                                                                        181:241] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
     price_per_min[241:301], price_per_min[301:361], price_per_min[361:421], price_per_min[
-                                                                            421:481] = 0.015, 0.022, 0.025, 0.054
+                                                                            421:481] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
     price_per_min[481:541], price_per_min[541:601], price_per_min[601:661], price_per_min[
-                                                                            661:721] = 0.062, 0.065, 0.069, 0.077
+                                                                            661:721] = 2.4/60, 2.5/60, 2.7/60, 3/60
     price_per_min[721:781], price_per_min[781:841], price_per_min[841:901], price_per_min[
-                                                                            901:961] = 0.08, 0.082, 0.085, 0.1
+                                                                            901:961] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
     price_per_min[961:1021], price_per_min[1021:1081], price_per_min[1081:1141], price_per_min[
-                                                                                 1141:1201] = 0.105, 0.096, 0.082, 0.08
+                                                                                 1141:1201] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
     price_per_min[1201:1261], price_per_min[1261:1321], price_per_min[1321:1381], price_per_min[
-                                                                                  1381:1440] = 0.077, 0.073, 0.062, 0.032
+                                                                                  1381:1442] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 
@@ -73,7 +83,12 @@ def getPricePerMin():
 # tariffs h = lambda * a C = 0.0333 per time slot, lambda = 1.543 ps = {} pc = {} EB = sum(ps*pc)
 
 def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
-    sum_cost = price_per_min[min] * power_consumption
+    c = 0.0333
+    l = 1.543
+    if power_consumption > c:
+        sum_cost = price_per_min[min] * 1.543
+    else:
+        sum_cost = price_per_min[min] * power_consumption
     ps_per_min.append(power_consumption)
     ps_min.append(min)
     return sum_cost, ps_per_min, ps_min
@@ -82,8 +97,8 @@ def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
 def wtr_calc(lst):
     val1, val2 = 0, 0
     for appliance in lst:
-        val1 = val1 + (appliance[1] - appliance[3])
-        val2 = val2 + (appliance[4] - appliance[3] - appliance[2])
+        val1 += (appliance[1] - appliance[3])
+        val2 += (appliance[4] - appliance[3] - appliance[2])
     return val1 / val2
 
 # calculate CPR, get power consumption at all minutes & calculate accordingly
@@ -94,8 +109,8 @@ def cpr_calc(ps_list, nsas):
     n = 1440
     for x in ps_list:
         for nsa in nsas:
-            if not nsa[1] < (c-x):
-                total_cpr = total_cpr + 1
+            if not nsa < (c-x):
+                total_cpr += 1
     return total_cpr / (q*n)
 
 
