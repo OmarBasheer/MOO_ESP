@@ -3,7 +3,8 @@ from support_methods import *
 import matplotlib.pyplot as plt
 import numpy as np
 from pymoo.algorithms.soo.nonconvex.pso import PSO, PSOAnimation
-
+from scipy import spatial
+from sko.PSO import PSO
 from pso import pso_simple
 
 
@@ -21,7 +22,7 @@ ps_max_list = np.zeros(1441)
 positions = []
 app_st = []
 app_et = []
-bounds=[]
+bounds= []
 
 consumption_per_min = []
 final_consumption_list = np.zeros(1440)
@@ -45,10 +46,16 @@ for x in all_sa:
         consumption_per_min.append([mint, cost[x]])
 consumption_per_min.sort()
 
-# opt = pso_simple.minimize(getBill, app_st, bounds, num_particles=15, maxiter=30, verbose=False)
-# print(opt)
+#pso = PSO(func=getBill, n_dim=36, pop=12, max_iter=500, lb=lb, ub=ub, w=0.8, c1=0.6, c2=0.5)
+#pso.run()
+#print('best_x is ', pso.gbest_x, 'best_y is', pso.gbest_y)
+
+#opt = pso_simple.minimize(wtr_calc, app_st, bounds, num_particles=30, maxiter=300, verbose=False)
+
 print("Appliances & their start time", positions)
 # print(consumption_per_min)
+#############
+
 
 for x in consumption_per_min:
     ps_max_list[x[0]] = ps_max_list[x[0]] + x[1]
@@ -59,15 +66,15 @@ ps_max = ps_max_list[np.argmax(ps_max_list)]
 ps_avg = Average(ps_max_list)
 
 
-
+########
 
 # fix to have all of appliances
 # eb_sum = calculate_eb(positions, price_per_min)
 eb_sum = getBill(app_st)
 # get consumption for each minute to test.
-consumption_mins = np.zeros(1441)
+consumption_mins = np.zeros(1440)
 for x in consumption_per_min:
-    consumption_mins[x[0]] +=  x[1]
+    consumption_mins[x[0]] += x[1]
 
 print("Electricity Price is", eb_sum)
 
@@ -75,7 +82,7 @@ print("Electricity Price is", eb_sum)
 par_val = ps_max / ps_avg
 
 # should be between 0 and 1
-wtr_avg_val = wtr_calc(positions)
+wtr_avg_val = wtr_calc(app_st)
 
 nsas, pns = getnsa()
 

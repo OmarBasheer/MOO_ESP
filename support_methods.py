@@ -3,14 +3,23 @@ import numpy as np
 def Average(lst):
     return sum(lst) / len(lst)
 
+
 def getBill(x):
-    total = 0
+    c = 0.0333
+    l = 1.543
+    app_sum, total = 0, 0
     loc, lb, ub, cost = getAppliances()
     price = getPricePerMin()
     for i in range(36):
-        for j in range(x[i], x[i]+loc[i]):
-            total += cost[i] * price[j]
+        appliance_length = round(x[i]+loc[i] - round(x[i]))
+        for j in range(appliance_length+1):
+            if cost[i] > c:
+                app_sum += cost[i] * price[j] * l
+            else:
+                app_sum += cost[i] * price[j]
+        total += app_sum
     return total
+
 
 def getAppliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
@@ -36,6 +45,7 @@ def getAppliances():
     cost = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
     return loc, lb, ub, cost
 
+
 def calculate_eb(appliances, price_per_min):
     eb_sum=0
     ps_list = []
@@ -51,6 +61,7 @@ def calculate_eb(appliances, price_per_min):
                 app_sum = app_sum + (price_per_min[appliance[1] + minute] * appliance[5])
         eb_sum += app_sum
     return eb_sum
+
 
 def getnsa():
     ns = ['light','afan', 'tfan','iron','toaser', 'ccharger',
@@ -73,7 +84,7 @@ def getPricePerMin():
     price_per_min[961:1021], price_per_min[1021:1081], price_per_min[1081:1141], price_per_min[
                                                                                  1141:1201] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
     price_per_min[1201:1261], price_per_min[1261:1321], price_per_min[1321:1381], price_per_min[
-                                                                                  1381:1442] = 3/60, 2.8/60, 2.4/60, 1.9/60
+                                                                                  1381:1441] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 
@@ -94,12 +105,16 @@ def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
     return sum_cost, ps_per_min, ps_min
 
 # calculate wtr average as per the equation
-def wtr_calc(lst):
+
+
+def wtr_calc(st):
     val1, val2 = 0, 0
-    for appliance in lst:
-        val1 += (appliance[1] - appliance[3])
-        val2 += (appliance[4] - appliance[3] - appliance[2])
+    loc, lb, ub, cost = getAppliances()
+    for x in range(36):
+        val1 += (st[x] - lb[x])
+        val2 += (ub[x] - lb[x] - loc[x])
     return val1 / val2
+
 
 # calculate CPR, get power consumption at all minutes & calculate accordingly
 def cpr_calc(ps_list, nsas):
@@ -114,8 +129,22 @@ def cpr_calc(ps_list, nsas):
     return total_cpr / (q*n)
 
 
+def calc_cpr(st):
+    nsa, pns = getnsa()
+    total_cpr = 0
+    cpr_per_minute = np.zeros(1440)
+    c = 0.0333
+    q = len(st)
+    n = 1440
+    loc, lb, ub, cost = getAppliances()
+    for i in range(q):
+        for j in range(st[i], st[i]+loc):
+            cpr_per_minute[j] += cost[i]
+
+
 def uc_calculate(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
+
 
 def multiobjective(eb, par, wtr, cpr):
     return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr
