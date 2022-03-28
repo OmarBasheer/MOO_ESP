@@ -10,13 +10,13 @@ def getBill(x):
     app_sum, total = 0, 0
     loc, lb, ub, cost = getAppliances()
     price = getPricePerMin()
-    for i in range(36):
+    for i in range(len(x)):
         appliance_length = round(x[i]+loc[i] - round(x[i]))
         for j in range(appliance_length+1):
             if cost[i] > c:
-                app_sum += cost[i] * price[j] * l
+                app_sum += (cost[i] * price[x[i]+j] * l)
             else:
-                app_sum += cost[i] * price[j]
+                app_sum += (cost[i] * price[x[i]+j])
         total += app_sum
     return total
 
@@ -54,7 +54,7 @@ def calculate_eb(appliances, price_per_min):
     c = 0.0333
     l = 1.543
     for appliance in appliances:  # Loop through all appliances
-        for minute in range(appliance[2]):  # Loop through durations of each appliance
+        for minute in range(appliance[2]+1):  # Loop through durations of each appliance
             if appliance[5] > c:
                 app_sum = app_sum + ((price_per_min[appliance[1] + minute] * l) * appliance[5])
             else:
@@ -72,19 +72,19 @@ def getnsa():
 
 
 def getPricePerMin():
-    price_per_min = np.zeros(1442)
-    price_per_min[0:61], price_per_min[61:121], price_per_min[121:181], price_per_min[
-                                                                        181:241] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
-    price_per_min[241:301], price_per_min[301:361], price_per_min[361:421], price_per_min[
-                                                                            421:481] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
-    price_per_min[481:541], price_per_min[541:601], price_per_min[601:661], price_per_min[
-                                                                            661:721] = 2.4/60, 2.5/60, 2.7/60, 3/60
-    price_per_min[721:781], price_per_min[781:841], price_per_min[841:901], price_per_min[
-                                                                            901:961] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
-    price_per_min[961:1021], price_per_min[1021:1081], price_per_min[1081:1141], price_per_min[
-                                                                                 1141:1201] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
-    price_per_min[1201:1261], price_per_min[1261:1321], price_per_min[1321:1381], price_per_min[
-                                                                                  1381:1441] = 3/60, 2.8/60, 2.4/60, 1.9/60
+    price_per_min = np.zeros(1441)
+    price_per_min[1:60], price_per_min[61:120], price_per_min[121:180], price_per_min[
+                                                                        181:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
+    price_per_min[241:300], price_per_min[301:360], price_per_min[361:420], price_per_min[
+                                                                            421:480] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
+    price_per_min[481:540], price_per_min[541:600], price_per_min[601:660], price_per_min[
+                                                                            661:720] = 2.4/60, 2.5/60, 2.7/60, 3/60
+    price_per_min[721:780], price_per_min[781:840], price_per_min[841:899], price_per_min[
+                                                                            901:959] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
+    price_per_min[961:1020], price_per_min[1021:1080], price_per_min[1081:1140], price_per_min[
+                                                                                 1141:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
+    price_per_min[1201:1260], price_per_min[1261:1320], price_per_min[1321:1380], price_per_min[
+                                                                                  1381:1440] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 

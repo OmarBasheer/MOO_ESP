@@ -1,11 +1,11 @@
 from random import randint
 from support_methods import *
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
-from pymoo.algorithms.soo.nonconvex.pso import PSO, PSOAnimation
-from scipy import spatial
+# pymoo.algorithms.soo.nonconvex.pso import PSO, PSOAnimation
+#from scipy import spatial
 from sko.PSO import PSO
-from pso import pso_simple
+#from pso import pso_simple
 
 
 ###############
@@ -22,7 +22,7 @@ ps_max_list = np.zeros(1441)
 positions = []
 app_st = []
 app_et = []
-bounds= []
+bounds = []
 
 consumption_per_min = []
 final_consumption_list = np.zeros(1440)
@@ -50,7 +50,7 @@ consumption_per_min.sort()
 #pso.run()
 #print('best_x is ', pso.gbest_x, 'best_y is', pso.gbest_y)
 
-#opt = pso_simple.minimize(wtr_calc, app_st, bounds, num_particles=30, maxiter=300, verbose=False)
+opt = pso_simple.minimize(wtr_calc, app_st, bounds, num_particles=30, maxiter=300, verbose=False)
 
 print("Appliances & their start time", positions)
 # print(consumption_per_min)
@@ -69,7 +69,7 @@ ps_avg = Average(ps_max_list)
 ########
 
 # fix to have all of appliances
-# eb_sum = calculate_eb(positions, price_per_min)
+#eb_sum = calculate_eb(positions, price_per_min)
 eb_sum = getBill(app_st)
 # get consumption for each minute to test.
 consumption_mins = np.zeros(1440)
