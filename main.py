@@ -2,10 +2,8 @@ from random import randint
 from support_methods import *
 #import matplotlib.pyplot as plt
 import numpy as np
-# pymoo.algorithms.soo.nonconvex.pso import PSO, PSOAnimation
-#from scipy import spatial
-from sko.PSO import PSO
-#from pso import pso_simple
+
+from pso import pso_simple
 
 
 ###############
@@ -16,7 +14,7 @@ num_slots = 1440  # Number of time slots, 1 minute each, demonstrating a full da
 all_sa = range(num_sa)
 all_slots = range(num_slots)
 remaining_slots = num_slots
-loc, lb, ub, cost = getAppliances()
+loc, lb, ub, cost = get_appliances()
 ps_max_list = np.zeros(1441)
 
 positions = []
@@ -46,19 +44,21 @@ for x in all_sa:
         consumption_per_min.append([mint, cost[x]])
 consumption_per_min.sort()
 
-#pso = PSO(func=getBill, n_dim=36, pop=12, max_iter=500, lb=lb, ub=ub, w=0.8, c1=0.6, c2=0.5)
-#pso.run()
-#print('best_x is ', pso.gbest_x, 'best_y is', pso.gbest_y)
+# get consumption for each minute to test.
+consumption_mins = np.zeros(1440)
+for x in consumption_per_min:
+    consumption_mins[x[0]] += x[1]
 
-opt = pso_simple.minimize(wtr_calc, app_st, bounds, num_particles=30, maxiter=300, verbose=False)
+opt = pso_simple.minimize(calc_cpr, app_st, bounds, num_particles=5, maxiter=500, verbose=False)
 
+print(opt)
 print("Appliances & their start time", positions)
 # print(consumption_per_min)
 #############
-
-
 for x in consumption_per_min:
     ps_max_list[x[0]] = ps_max_list[x[0]] + x[1]
+
+
 
 # print(ps_max_list)
 
@@ -69,12 +69,9 @@ ps_avg = Average(ps_max_list)
 ########
 
 # fix to have all of appliances
-#eb_sum = calculate_eb(positions, price_per_min)
+# eb_sum = calculate_eb(positions, price_per_min)
 eb_sum = getBill(app_st)
-# get consumption for each minute to test.
-consumption_mins = np.zeros(1440)
-for x in consumption_per_min:
-    consumption_mins[x[0]] += x[1]
+
 
 print("Electricity Price is", eb_sum)
 

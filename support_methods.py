@@ -1,5 +1,8 @@
 import numpy as np
 
+import main
+
+
 def Average(lst):
     return sum(lst) / len(lst)
 
@@ -8,20 +11,20 @@ def getBill(x):
     c = 0.0333
     l = 1.543
     app_sum, total = 0, 0
-    loc, lb, ub, cost = getAppliances()
+    loc, lb, ub, cost = get_appliances()
     price = getPricePerMin()
     for i in range(len(x)):
         appliance_length = round(x[i]+loc[i] - round(x[i]))
         for j in range(appliance_length+1):
             if cost[i] > c:
-                app_sum += (cost[i] * price[x[i]+j] * l)
+                app_sum += (cost[i] * price[round(x[i])+j] * l)
             else:
-                app_sum += (cost[i] * price[x[i]+j])
+                app_sum += (cost[i] * price[round(x[i])+j])
         total += app_sum
     return total
 
 
-def getAppliances():
+def get_appliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
         ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60],['ac', 30, 1, 120, 1.2 / 60], ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
         ['ac', 30, 480, 600, 1.2 / 60],
@@ -72,7 +75,7 @@ def getnsa():
 
 
 def getPricePerMin():
-    price_per_min = np.zeros(1441)
+    price_per_min = np.zeros(1443)
     price_per_min[1:60], price_per_min[61:120], price_per_min[121:180], price_per_min[
                                                                         181:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
     price_per_min[241:300], price_per_min[301:360], price_per_min[361:420], price_per_min[
@@ -84,7 +87,7 @@ def getPricePerMin():
     price_per_min[961:1020], price_per_min[1021:1080], price_per_min[1081:1140], price_per_min[
                                                                                  1141:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
     price_per_min[1201:1260], price_per_min[1261:1320], price_per_min[1321:1380], price_per_min[
-                                                                                  1381:1440] = 3/60, 2.8/60, 2.4/60, 1.9/60
+                                                                                  1381:1442] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 
@@ -109,7 +112,7 @@ def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
 
 def wtr_calc(st):
     val1, val2 = 0, 0
-    loc, lb, ub, cost = getAppliances()
+    loc, lb, ub, cost = get_appliances()
     for x in range(36):
         val1 += (st[x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
@@ -136,11 +139,17 @@ def calc_cpr(st):
     c = 0.0333
     q = len(st)
     n = 1440
-    loc, lb, ub, cost = getAppliances()
-    for i in range(q):
-        for j in range(st[i], st[i]+loc):
-            cpr_per_minute[j] += cost[i]
+    loc, lb, ub, cost = get_appliances()
+    consumption = getconsumptionpermin()
+    for x in consumption:
+        for p in pns:
+            if not p < (c-x[1]):
+                total_cpr += 1
+    return total_cpr / (q*n)
 
+def getconsumptionpermin():
+    main.consumption_mins.sort()
+    return main.consumption_per_min
 
 def uc_calculate(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
