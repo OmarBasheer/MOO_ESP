@@ -14,19 +14,23 @@ def getBill(x):
     loc, lb, ub, cost = get_appliances()
     price = getPricePerMin()
     for i in range(len(x)):
-        appliance_length = round(x[i]+loc[i] - round(x[i]))
+        temp = round(x[i])
+        appliance_length = temp + loc[i] - x[i]
+        if appliance_length > ub[i]:
+            appliance_length -= 1
         for j in range(appliance_length+1):
             if cost[i] > c:
-                app_sum += (cost[i] * price[round(x[i])+j] * l)
+                app_sum += (cost[i] * price[temp+j] * l)
             else:
-                app_sum += (cost[i] * price[round(x[i])+j])
+                app_sum += (cost[i] * price[temp+j])
         total += app_sum
+
     return total
 
 
 def get_appliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
-        ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60],['ac', 30, 1, 120, 1.2 / 60], ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
+        ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60], ['ac', 30, 1, 120, 1.2 / 60], ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
         ['ac', 30, 480, 600, 1.2 / 60],
         ['ac', 30, 600, 720, 1.2 / 60], ['ac', 30, 720, 840, 1.2 / 60], ['ac', 30, 840, 960, 1.2 / 60],
         ['ac', 30, 960, 1080, 1.2 / 60],
@@ -43,8 +47,8 @@ def get_appliances():
         ['cm', 10, 300, 450, 1.5 / 60], ['cm', 10, 1020, 1140, 1.5 / 60], ['pf', 180, 1, 540, 1 / 60],
         ['pf', 180, 900, 1440, 1 / 60]]
     loc = np.array([105, 105, 105, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 55, 60, 1440, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 35, 35, 10, 10, 180, 180])
-    lb = np.array([540, 840, 1200, 1, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 60, 300, 1, 1, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 300, 1100, 300, 1020, 1, 900])
-    ub = np.array([780, 1080, 1440, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 300, 480, 1440, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1440, 420, 1440, 450, 1140, 540, 1440])
+    lb = np.array([539, 839, 1199, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 59, 299, 0, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 299, 1099, 299, 1019, 0, 899])
+    ub = np.array([779, 1079, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 299, 479, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 419, 1439, 449, 1139, 539, 1439])
     cost = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
     return loc, lb, ub, cost
 
@@ -53,7 +57,7 @@ def calculate_eb(appliances, price_per_min):
     eb_sum=0
     ps_list = []
     ps_min = []
-    app_sum=0
+    app_sum = 0
     c = 0.0333
     l = 1.543
     for appliance in appliances:  # Loop through all appliances
@@ -75,8 +79,8 @@ def getnsa():
 
 
 def getPricePerMin():
-    price_per_min = np.zeros(1443)
-    price_per_min[1:60], price_per_min[61:120], price_per_min[121:180], price_per_min[
+    price_per_min = np.zeros(1440)
+    price_per_min[0:60], price_per_min[61:120], price_per_min[121:180], price_per_min[
                                                                         181:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
     price_per_min[241:300], price_per_min[301:360], price_per_min[361:420], price_per_min[
                                                                             421:480] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
@@ -87,7 +91,7 @@ def getPricePerMin():
     price_per_min[961:1020], price_per_min[1021:1080], price_per_min[1081:1140], price_per_min[
                                                                                  1141:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
     price_per_min[1201:1260], price_per_min[1261:1320], price_per_min[1321:1380], price_per_min[
-                                                                                  1381:1442] = 3/60, 2.8/60, 2.4/60, 1.9/60
+                                                                                  1381:1439] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 
@@ -114,7 +118,7 @@ def wtr_calc(st):
     val1, val2 = 0, 0
     loc, lb, ub, cost = get_appliances()
     for x in range(36):
-        val1 += (st[x] - lb[x])
+        val1 += (st[0][x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
     return val1 / val2
 
@@ -155,5 +159,11 @@ def uc_calculate(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
 
 
+def calculate_par(st):
+    ps_max = main.ps_max_list[np.argmax(main.ps_max_list)]
+    ps_avg = Average(main.ps_max_list)
+    return ps_max/ps_avg
+
+
 def multiobjective(eb, par, wtr, cpr):
-    return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr
+    return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b

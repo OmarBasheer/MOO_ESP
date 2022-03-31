@@ -1,10 +1,12 @@
 from random import randint
+
+import psoo
 from support_methods import *
 #import matplotlib.pyplot as plt
 import numpy as np
 
 from pso import pso_simple
-
+import pyswarms as ps
 
 ###############
 
@@ -48,11 +50,16 @@ consumption_per_min.sort()
 consumption_mins = np.zeros(1440)
 for x in consumption_per_min:
     consumption_mins[x[0]] += x[1]
-
-opt = pso_simple.minimize(calc_cpr, app_st, bounds, num_particles=5, maxiter=500, verbose=False)
-
-print(opt)
-print("Appliances & their start time", positions)
+test = psoo.PSO(getBill, )
+#opt = pso_simple.minimize(getBill, app_st, bounds, num_particles=20, maxiter=300)
+# Set-up all the hyperparameters
+#options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
+# Call an instance of PSO
+#optimizer = ps.single.GlobalBestPSO(n_particles=10, dimensions=36, options=options, bounds=[lb, ub])
+# Perform the optimization
+#cost, pos = optimizer.optimize(wtr_calc, iters=1000)
+#print(cost, pos)
+#print("Appliances & their start time", positions)
 # print(consumption_per_min)
 #############
 for x in consumption_per_min:
@@ -62,8 +69,8 @@ for x in consumption_per_min:
 
 # print(ps_max_list)
 
-ps_max = ps_max_list[np.argmax(ps_max_list)]
-ps_avg = Average(ps_max_list)
+#ps_max = ps_max_list[np.argmax(ps_max_list)]
+#ps_avg = Average(ps_max_list)
 
 
 ########
@@ -76,7 +83,9 @@ eb_sum = getBill(app_st)
 print("Electricity Price is", eb_sum)
 
 # lower PAR is better
-par_val = ps_max / ps_avg
+#par_val = ps_max / ps_avg
+
+par_val = calculate_par(app_st)
 
 # should be between 0 and 1
 wtr_avg_val = wtr_calc(app_st)
@@ -88,4 +97,5 @@ lastval = multiobjective(eb_sum, par_val, wtr_avg_val, cpr_val)
 print("PAR value: ", par_val)
 print("WTR Average time: ", wtr_avg_val)
 print("CPR value is: ", cpr_val)
-print("Last value is: ", lastval)
+print("Multi-objective value is: ", lastval)
+print(consumption_matrix)
