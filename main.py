@@ -5,7 +5,7 @@ from support_methods import *
 #import matplotlib.pyplot as plt
 import numpy as np
 
-from pso import pso_simple
+#from pso import pso_simple
 import pyswarms as ps
 
 ###############
@@ -50,15 +50,11 @@ consumption_per_min.sort()
 consumption_mins = np.zeros(1440)
 for x in consumption_per_min:
     consumption_mins[x[0]] += x[1]
-test = psoo.PSO(getBill, )
+test = psoo.PSO(wtr_calc, app_st, bounds=bounds, num_particles=15, maxiter=300)
+print(test)
+
 #opt = pso_simple.minimize(getBill, app_st, bounds, num_particles=20, maxiter=300)
-# Set-up all the hyperparameters
-#options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
-# Call an instance of PSO
-#optimizer = ps.single.GlobalBestPSO(n_particles=10, dimensions=36, options=options, bounds=[lb, ub])
-# Perform the optimization
-#cost, pos = optimizer.optimize(wtr_calc, iters=1000)
-#print(cost, pos)
+
 #print("Appliances & their start time", positions)
 # print(consumption_per_min)
 #############

@@ -15,14 +15,15 @@ def getBill(x):
     price = getPricePerMin()
     for i in range(len(x)):
         temp = round(x[i])
-        appliance_length = temp + loc[i] - x[i]
+        appliance_length = temp + loc[i] - temp
         if appliance_length > ub[i]:
             appliance_length -= 1
         for j in range(appliance_length+1):
             if cost[i] > c:
                 app_sum += (cost[i] * price[temp+j] * l)
             else:
-                app_sum += (cost[i] * price[temp+j])
+                app_sum += (cost[i] * price[temp])
+
         total += app_sum
 
     return total
@@ -118,7 +119,7 @@ def wtr_calc(st):
     val1, val2 = 0, 0
     loc, lb, ub, cost = get_appliances()
     for x in range(36):
-        val1 += (st[0][x] - lb[x])
+        val1 += (st[x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
     return val1 / val2
 
@@ -135,7 +136,7 @@ def cpr_calc(ps_list, nsas):
                 total_cpr += 1
     return total_cpr / (q*n)
 
-
+## fix this
 def calc_cpr(st):
     nsa, pns = getnsa()
     total_cpr = 0
