@@ -94,8 +94,6 @@ class PSO():
         # begin optimization loop
         i = 0
         while i < maxiter:
-            matplotlib.pyplot.plot(pos_best_g)
-            matplotlib.pyplot.show()
             # print i,err_best_g
             # cycle through particles in swarm and evaluate fitness
             for j in range(0, num_particles):
@@ -117,10 +115,3 @@ class PSO():
         print(pos_best_g)
         print(err_best_g)
 
-# --- RUN ----------------------------------------------------------------------+
-
-#initial = [5, 5]  # initial starting location [x1,x2...]
-#bounds = [(-10, 10), (-10, 10)]  # input bounds [(x1_min,x1_max),(x2_min,x2_max)...]
-#PSO(func1, initial, bounds, num_particles=15, maxiter=30)
-
-# --- END ---

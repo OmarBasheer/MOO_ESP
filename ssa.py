@@ -22,6 +22,7 @@ def Parameters(F):
     elif F=='F6':
         ParaValue = [-100,100,30]
     return ParaValue
+
 # 标准测试函数采用单峰测试函数（Dim = 30），计算适应度
 def fun(F,X):  # F代表函数名，X代表数据列表
     if F == 'F1':

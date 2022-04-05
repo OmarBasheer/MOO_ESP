@@ -50,18 +50,14 @@ consumption_per_min.sort()
 consumption_mins = np.zeros(1440)
 for x in consumption_per_min:
     consumption_mins[x[0]] += x[1]
-test = psoo.PSO(wtr_calc, app_st, bounds=bounds, num_particles=15, maxiter=300)
-print(test)
+p = psoo.PSO(getBill, app_st, bounds=bounds, num_particles=15, maxiter=300)
 
-#opt = pso_simple.minimize(getBill, app_st, bounds, num_particles=20, maxiter=300)
 
 #print("Appliances & their start time", positions)
 # print(consumption_per_min)
 #############
 for x in consumption_per_min:
     ps_max_list[x[0]] = ps_max_list[x[0]] + x[1]
-
-
 
 # print(ps_max_list)
 

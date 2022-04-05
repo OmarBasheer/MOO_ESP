@@ -54,22 +54,6 @@ def get_appliances():
     return loc, lb, ub, cost
 
 
-def calculate_eb(appliances, price_per_min):
-    eb_sum=0
-    ps_list = []
-    ps_min = []
-    app_sum = 0
-    c = 0.0333
-    l = 1.543
-    for appliance in appliances:  # Loop through all appliances
-        for minute in range(appliance[2]+1):  # Loop through durations of each appliance
-            if appliance[5] > c:
-                app_sum = app_sum + ((price_per_min[appliance[1] + minute] * l) * appliance[5])
-            else:
-                app_sum = app_sum + (price_per_min[appliance[1] + minute] * appliance[5])
-        eb_sum += app_sum
-    return eb_sum
-
 
 def getnsa():
     ns = ['light','afan', 'tfan','iron','toaser', 'ccharger',
@@ -101,16 +85,6 @@ def getPricePerMin():
 #
 # tariffs h = lambda * a C = 0.0333 per time slot, lambda = 1.543 ps = {} pc = {} EB = sum(ps*pc)
 
-def price_calculate(min, power_consumption, ps_per_min, ps_min, price_per_min):
-    c = 0.0333
-    l = 1.543
-    if power_consumption > c:
-        sum_cost = price_per_min[min] * 1.543
-    else:
-        sum_cost = price_per_min[min] * power_consumption
-    ps_per_min.append(power_consumption)
-    ps_min.append(min)
-    return sum_cost, ps_per_min, ps_min
 
 # calculate wtr average as per the equation
 
@@ -168,3 +142,12 @@ def calculate_par(st):
 
 def multiobjective(eb, par, wtr, cpr):
     return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b
+
+def objfun(app_st):
+    eb = getBill(app_st)
+    par = calculate_par(app_st)
+    wtr = wtr_calc(app_st)
+    cpr = calc_cpr(app_st)
+    a = getBill(app_st)
+    b = calculate_par(app_st)
+    return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
