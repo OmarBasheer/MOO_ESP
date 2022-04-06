@@ -20,7 +20,10 @@ def getBill(x):
             appliance_length -= 1
         for j in range(appliance_length+1):
             if cost[i] > c:
-                app_sum += (cost[i] * price[temp+j] * l)
+                if not temp+j >= 1440:
+                    app_sum += (cost[i] * price[temp+j] * l)
+                else:
+                    app_sum += (cost[i] * price[1439] * l)
             else:
                 app_sum += (cost[i] * price[temp])
 
@@ -119,8 +122,8 @@ def calc_cpr(st):
     q = len(st)
     n = 1440
     loc, lb, ub, cost = get_appliances()
-    consumption = getconsumptionpermin()
-    for x in consumption:
+    #consumption = getconsumptionpermin()
+    for x in range(n):
         for p in pns:
             if not p < (c-x[1]):
                 total_cpr += 1
