@@ -6,6 +6,9 @@ import main
 def Average(lst):
     return sum(lst) / len(lst)
 
+def initialize():
+
+    return startTime
 
 def getBill(x):
     c = 0.0333

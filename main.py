@@ -59,7 +59,7 @@ problem_dict1 = {
          "minmax": "min",
      }
 epoch = 100
-pop_size = 10
+pop_size = 36
 ST = 0.8
 PD = 0.2
 SD = 0.1
