@@ -1,3 +1,5 @@
+from random import randint
+
 import numpy as np
 
 import main
@@ -7,8 +9,31 @@ def Average(lst):
     return sum(lst) / len(lst)
 
 def initialize():
-
-    return startTime
+    sa_num = range(36)
+    loc, lb, ub, cost = get_appliances()
+    price_per_min = getPricePerMin()
+    positions = []
+    app_st = []
+    app_et = []
+    bounds = []
+    consumption_per_min = []
+    final_consumption_list = np.zeros(1440)
+    consumption_matrix = np.zeros((36, 1440))
+    for x in sa_num:
+        bounds.append((lb[x], ub[x]))
+        if ub[x] - loc[x] < lb[x]:
+            slotter = 0
+        else:
+            slotter = randint(lb[x], ub[x] - loc[x])
+        positions.append(
+            [x, slotter, loc[x], lb[x], ub[x], cost[x]])  # [Appliance #, starting slot, lower bound, upper bound]
+        app_st.append(slotter)
+        app_et.append(slotter + loc[x])
+        for mint in range(slotter, slotter + loc[x]):
+            consumption_matrix[x][mint] = price_per_min[mint]
+            consumption_per_min.append([mint, cost[x]])
+    consumption_per_min.sort()
+    return consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions
 
 def getBill(x):
     c = 0.0333
@@ -18,7 +43,7 @@ def getBill(x):
     price = getPricePerMin()
     for i in range(len(x)):
         temp = round(x[i])
-        appliance_length = temp + loc[i] - temp
+        appliance_length = loc[i]
         if appliance_length > ub[i]:
             appliance_length -= 1
         for j in range(appliance_length+1):
@@ -31,7 +56,6 @@ def getBill(x):
                 app_sum += (cost[i] * price[temp])
 
         total += app_sum
-
     return total
 
 
