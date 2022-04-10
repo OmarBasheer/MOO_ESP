@@ -1,3 +1,5 @@
+from __future__ import division
+
 from random import randint
 
 import numpy as np
@@ -16,8 +18,7 @@ def initialize():
     app_st = []
     app_et = []
     bounds = []
-    consumption_per_min = []
-    final_consumption_list = np.zeros(1440)
+    consumption_per_min = np.zeros(1440)
     consumption_matrix = np.zeros((36, 1440))
     for x in sa_num:
         bounds.append((lb[x], ub[x]))
@@ -30,34 +31,39 @@ def initialize():
         app_st.append(slotter)
         app_et.append(slotter + loc[x])
         for mint in range(slotter, slotter + loc[x]):
-            consumption_matrix[x][mint] = price_per_min[mint]
-            consumption_per_min.append([mint, cost[x]])
-    consumption_per_min.sort()
+            consumption_matrix[x][mint] = cost[x]
+            consumption_per_min[mint] += cost[x]
     return consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions
 
-def getBill(x):
+
+def newBill(app_st):
     c = 0.0333
     l = 1.543
-    app_sum, total = 0, 0
+    loc, lb, ub, cost = get_appliances()
+    consumption_per_min = np.zeros(1440)
+    price = getPricePerMin()
+    total_cost = 0
+    for x in range(36):
+        test = np.rint(app_st[x]).astype("int32")
+        for y in range(test, test+loc[x]):
+            consumption_per_min[y] += cost[x]
+    for i in range(len(consumption_per_min)):
+        if consumption_per_min[i] > c:
+            total_cost += price[i] * consumption_per_min[i] * l
+        else:
+            total_cost += price[i] * consumption_per_min[i]
+    return total_cost
+
+def getConsumptionMatrix(app_st):
+    consumption_matrix = np.zeros((36, 1440))
+    consumption_per_min = np.zeros(1440)
     loc, lb, ub, cost = get_appliances()
     price = getPricePerMin()
-    for i in range(len(x)):
-        temp = round(x[i])
-        appliance_length = loc[i]
-        if appliance_length > ub[i]:
-            appliance_length -= 1
-        for j in range(appliance_length+1):
-            if cost[i] > c:
-                if not temp+j >= 1440:
-                    app_sum += (cost[i] * price[temp+j] * l)
-                else:
-                    app_sum += (cost[i] * price[1439] * l)
-            else:
-                app_sum += (cost[i] * price[temp])
-
-        total += app_sum
-    return total
-
+    for x in range(36):
+        for j in range(round(app_st[x]), round(app_st[x])+loc[x]):
+            consumption_matrix[x][j] = cost[x]
+            consumption_per_min[j] = cost[x]
+    return consumption_matrix, consumption_per_min
 
 def get_appliances():
     appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
@@ -81,7 +87,8 @@ def get_appliances():
     lb = np.array([539, 839, 1199, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 59, 299, 0, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 299, 1099, 299, 1019, 0, 899])
     ub = np.array([779, 1079, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 299, 479, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 419, 1439, 449, 1139, 539, 1439])
     cost = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
-    return loc, lb, ub, cost
+    cost2 = np.array([0.6/60, 0.6/60, 0.6/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 0.38/60, 0.8/60, 0.5/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 1.5/60, 1.5/60, 0.8/60, 0.8/60, 0.54/60, 0.54/60])
+    return loc, lb, ub, cost2
 
 
 
@@ -95,18 +102,18 @@ def getnsa():
 
 def getPricePerMin():
     price_per_min = np.zeros(1440)
-    price_per_min[0:60], price_per_min[61:120], price_per_min[121:180], price_per_min[
-                                                                        181:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
-    price_per_min[241:300], price_per_min[301:360], price_per_min[361:420], price_per_min[
-                                                                            421:480] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
-    price_per_min[481:540], price_per_min[541:600], price_per_min[601:660], price_per_min[
-                                                                            661:720] = 2.4/60, 2.5/60, 2.7/60, 3/60
-    price_per_min[721:780], price_per_min[781:840], price_per_min[841:899], price_per_min[
-                                                                            901:959] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
-    price_per_min[961:1020], price_per_min[1021:1080], price_per_min[1081:1140], price_per_min[
-                                                                                 1141:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
-    price_per_min[1201:1260], price_per_min[1261:1320], price_per_min[1321:1380], price_per_min[
-                                                                                  1381:1439] = 3/60, 2.8/60, 2.4/60, 1.9/60
+    price_per_min[0:60], price_per_min[60:120], price_per_min[120:180], price_per_min[
+                                                                        180:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
+    price_per_min[240:300], price_per_min[300:360], price_per_min[360:420], price_per_min[
+                                                                            420:480] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
+    price_per_min[480:540], price_per_min[540:600], price_per_min[600:660], price_per_min[
+                                                                            660:720] = 2.4/60, 2.5/60, 2.7/60, 3/60
+    price_per_min[720:780], price_per_min[780:840], price_per_min[840:899], price_per_min[
+                                                                            900:959] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
+    price_per_min[960:1020], price_per_min[1020:1080], price_per_min[1080:1140], price_per_min[
+                                                                                 1140:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
+    price_per_min[1200:1260], price_per_min[1260:1320], price_per_min[1320:1380], price_per_min[
+                                                                                  1380:1440] = 3/60, 2.8/60, 2.4/60, 1.9/60
     return price_per_min
 
 
@@ -128,31 +135,25 @@ def wtr_calc(st):
     return val1 / val2
 
 
-# calculate CPR, get power consumption at all minutes & calculate accordingly
-def cpr_calc(ps_list, nsas):
-    total_cpr = 0
-    c = 0.0333
-    q = len(nsas)
-    n = 1440
-    for x in ps_list:
-        for nsa in nsas:
-            if not nsa < (c-x):
-                total_cpr += 1
-    return total_cpr / (q*n)
 
-## fix this
-def calc_cpr(st):
+## fixed
+def calc_cpr(app_st):
     nsa, pns = getnsa()
-    total_cpr = 0
-    cpr_per_minute = np.zeros(1440)
     c = 0.0333
-    q = len(st)
+    q = len(nsa)
     n = 1440
+    l = 1.543
     loc, lb, ub, cost = get_appliances()
-    #consumption = getconsumptionpermin()
-    for x in range(n):
+    consumption_per_min = np.zeros(1440)
+    price = getPricePerMin()
+    total_cpr = 0
+    for x in range(36):
+        test = np.rint(app_st[x]).astype("int32")
+        for y in range(test, test+loc[x]):
+            consumption_per_min[y] += cost[x]
+    for i in range(len(consumption_per_min)):
         for p in pns:
-            if not p < (c-x[1]):
+            if not p < (c-consumption_per_min[i]):
                 total_cpr += 1
     return total_cpr / (q*n)
 
@@ -164,9 +165,19 @@ def uc_calculate(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
 
 
-def calculate_par(st):
-    ps_max = main.ps_max_list[np.argmax(main.ps_max_list)]
-    ps_avg = Average(main.ps_max_list)
+def calculate_par(app_st):
+    c = 0.0333
+    l = 1.543
+    loc, lb, ub, cost = get_appliances()
+    consumption_per_min = np.zeros(1440)
+    price = getPricePerMin()
+    total_cost = 0
+    for x in range(36):
+        test = np.rint(app_st[x]).astype("int32")
+        for y in range(test, test+loc[x]):
+            consumption_per_min[y] += cost[x]
+    ps_max = np.max(consumption_per_min)
+    ps_avg = Average(consumption_per_min)
     return ps_max/ps_avg
 
 

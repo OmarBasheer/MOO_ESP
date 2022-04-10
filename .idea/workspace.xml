@@ -2,11 +2,117 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="16b5b453-3658-4f9e-8df4-d90e85859417" name="Changes" comment="PSO working on EB, need to fix EB algorithm">
-      <change afterPath="$PROJECT_DIR$/report.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/BBO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/EOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/IWO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/SBO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/SMA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/TPO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/VCS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/WHO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/bio_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/CRO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/DE.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/EP.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/ES.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/FPA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/GA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/MA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/evolutionary_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/BRO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/BSO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/CA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/CHIO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/FBIO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/GSKA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/ICA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/LCO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/QSA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/SARO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/SSDO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/TLO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/human_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/AOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/CGO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/GBO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/HC.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/PSS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/SCA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/math_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/music_based/HS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/music_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/optimizer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/ASO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/ArchOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/EFO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/EO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/HGSO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/MVO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/NRO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/SA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/TWO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/WDO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/physics_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/probabilistic_based/CEM.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/probabilistic_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/ABC.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/ACOR.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/ALO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/AO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/BA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/BES.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/BFO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/BSA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/BeesA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/COA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/CSA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/CSO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/DO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/EHO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/FA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/FFA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/FOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/GOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/GWO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/HGS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/HHO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/JA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/MFO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/MRFO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/MSA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/NMRA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/PFA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/PSO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SFO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SHO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SLO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SRSR.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SSA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SSO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SSpiderA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/SSpiderO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/WOA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/swarm_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/system_based/AEO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/system_based/GCO.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/system_based/WCA.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/system_based/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/boundary.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/history.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/logger.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/problem.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/termination.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/validator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/visualize/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mealpy/utils/visualize/linechart.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ssa.py" beforeDir="false" afterPath="$PROJECT_DIR$/ssa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/report.log" beforeDir="false" afterPath="$PROJECT_DIR$/report.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/support_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/support_methods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unused_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/unused_methods.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,11 +126,15 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="26er2L689u1KRZcOWYLL2l7cdvw" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -202,6 +312,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="PSO working on EB, need to fix EB algorithm" />
     <option name="LAST_COMMIT_MESSAGE" value="PSO working on EB, need to fix EB algorithm" />
   </component>
@@ -212,6 +323,11 @@
           <url>file://$PROJECT_DIR$/test.py</url>
           <line>10</line>
           <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/support_methods.py</url>
+          <line>54</line>
+          <option name="timeStamp" value="48" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

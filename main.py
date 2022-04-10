@@ -8,6 +8,8 @@ import numpy as np
 from mealpy.swarm_based.SSA import BaseSSA
 from mealpy.swarm_based.PSO import BasePSO
 from mealpy.utils.visualize import *
+
+
 ###############
 
 
@@ -29,20 +31,20 @@ price_per_min = getPricePerMin()
 consumption_matrix = np.zeros((36, 1440))
 
 consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions = initialize()
-# get consumption for each minute to test.
-consumption_mins = np.zeros(1440)
-for x in consumption_per_min:
-    consumption_mins[x[0]] += x[1]
+
+
+
 #p = psoo.PSO(getBill, app_st, bounds=bounds, num_particles=20, maxiter=100)
 
 
 problem_dict1 = {
-         "fit_func": getBill,
+         "fit_func": newBill,
          "lb": lb.tolist(),
          "ub": ub.tolist(),
          "minmax": "min",
+         "loc": loc.tolist()
      }
-epoch = 100
+epoch = 50
 pop_size = 36
 ST = 0.8
 PD = 0.2
@@ -57,27 +59,16 @@ best_position, best_fitness = model.solve()
 
 model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max)
 best_position2, best_fitness2 = model2.solve()
+best_position2 = np.round(best_position2)
+#export_convergence_chart(model.history.list_population, title='Runtime chart', y_label="Second", x_label="Iteration")
+
 print(f"Solution: {best_position}, Fitness: {best_fitness}")
 
-print(f"Solution: {best_position2}, Fitness: {best_fitness2}")
-
-#print("Appliances & their start time", positions)
-# print(consumption_per_min)
-#############
-for x in consumption_per_min:
-    ps_max_list[x[0]] = ps_max_list[x[0]] + x[1]
-
-# print(ps_max_list)
-
-#ps_max = ps_max_list[np.argmax(ps_max_list)]
-#ps_avg = Average(ps_max_list)
+print(f"Solution: {np.round(best_position2)}, Fitness: {best_fitness2}")
 
 
-########
 
-# fix to have all of appliances
-# eb_sum = calculate_eb(positions, price_per_min)
-eb_sum = getBill(app_st)
+eb_sum = newBill(app_st)
 
 
 print("Electricity Price is", eb_sum)
@@ -91,11 +82,12 @@ par_val = calculate_par(app_st)
 wtr_avg_val = wtr_calc(app_st)
 
 nsas, pns = getnsa()
-
-cpr_val = cpr_calc(consumption_mins, pns)
+cpr_val = calc_cpr(app_st)
+uc = uc_calculate(wtr_avg_val, cpr_val)
 lastval = multiobjective(eb_sum, par_val, wtr_avg_val, cpr_val)
 print("PAR value: ", par_val)
 print("WTR Average time: ", wtr_avg_val)
-print("CPR value is: ", calc_cpr)
+print("CPR value is: ", cpr_val)
+print("uc comfort is:", uc)
 print("Multi-objective value is: ", lastval)
 print(consumption_matrix)
