@@ -209,10 +209,7 @@ class Problem:
         Returns:
             np.array: the position (the solution for the problem)
         """
-        if any(np.round(np.random.uniform(lb, ub-loc)).astype("int32")) < 0:
-            return 0
-        else:
-            return np.random.uniform(lb, ub-loc)
+        return np.random.uniform(lb, ub-loc)
 
     def amend_position(self, position=None, lb=None, ub=None, loc=None):
         """
@@ -230,7 +227,6 @@ class Problem:
         Returns:
             Amended position (make the position is in bound)
         """
-        if any(np.clip(position, lb, ub-loc)) < 0:
-            return 0
-        else:
-            return np.clip(position, lb, ub-loc)
+        solution = np.clip(position, lb, abs(ub - loc))
+        solution_int = solution.astype(int)
+        return solution_int

@@ -35,19 +35,40 @@ def initialize():
             consumption_per_min[mint] += cost[x]
     return consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions
 
+def getBill(x):
+    c = 0.0333
+    l = 1.543
+    app_sum, total = 0, 0
+    loc, lb, ub, cost = get_appliances()
+    price = getPricePerMin()
+    for i in range(len(x)):
+        temp = round(x[i])
+        appliance_length = loc[i]
+        if appliance_length > ub[i]:
+            appliance_length -= 1
+        for j in range(appliance_length+1):
+            if cost[i] > c:
+                if not temp+j >= 1440:
+                    app_sum += (cost[i] * price[temp+j] * l)
+                else:
+                    app_sum += (cost[i] * price[1439] * l)
+            else:
+                app_sum += (cost[i] * price[temp])
+        total += app_sum
+    return total
 
 def newBill(app_st):
     c = 0.0333
     l = 1.543
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, ps = get_appliances()
     consumption_per_min = np.zeros(1440)
     price = getPricePerMin()
     total_cost = 0
-    for x in range(36):
+    for x in range(36): #0-35
         test = np.rint(app_st[x]).astype("int32")
-        for y in range(test, test+loc[x]):
-            consumption_per_min[y] += cost[x]
-    for i in range(len(consumption_per_min)):
+        for y in range(test, test+loc[x]): #appliance start time -> starttime+LOC
+            consumption_per_min[y] += ps[x]
+    for i in range(len(consumption_per_min)): #loop from 0 - 1439
         if consumption_per_min[i] > c:
             total_cost += price[i] * consumption_per_min[i] * l
         else:
@@ -66,29 +87,12 @@ def getConsumptionMatrix(app_st):
     return consumption_matrix, consumption_per_min
 
 def get_appliances():
-    appliances = [  # [Appliance, LOC, OTPs, OTPe, power usage in kW]
-        ['dw', 105, 540, 780, 1.5 / 60], ['dw', 105, 840, 1080, 1.5 / 60], ['dw', 105, 1200, 1440, 1.5 / 60], ['ac', 30, 1, 120, 1.2 / 60], ['ac', 30, 120, 240, 1.2 / 60], ['ac', 30, 240, 360, 1.2 / 60], ['ac', 30, 360, 480, 1.2 / 60],
-        ['ac', 30, 480, 600, 1.2 / 60],
-        ['ac', 30, 600, 720, 1.2 / 60], ['ac', 30, 720, 840, 1.2 / 60], ['ac', 30, 840, 960, 1.2 / 60],
-        ['ac', 30, 960, 1080, 1.2 / 60],
-        ['ac', 30, 1080, 1200, 1.2 / 60], ['ac', 30, 1200, 1320, 1.2 / 60], ['ac', 30, 1320, 1440, 1.2 / 60],
-        ['wm', 55, 60, 300, 1.15 / 60],
-        ['cd', 60, 300, 480, 5.4 / 60], ['ref', 1440, 0, 1439, 0.5 / 60], ['deh', 30, 1, 120, 0.65 / 60],
-        ['deh', 30, 120, 240, 0.65 / 60],
-        ['deh', 30, 240, 360, 0.65 / 60], ['deh', 30, 360, 480, 0.65 / 60], ['deh', 30, 480, 600, 0.65 / 60],
-        ['deh', 30, 600, 720, 0.65 / 60],
-        ['deh', 30, 720, 840, 0.65 / 60], ['deh', 30, 840, 960, 0.65 / 60], ['deh', 30, 960, 1080, 0.65 / 60],
-        ['deh', 30, 1080, 1200, 0.65 / 60],
-        ['deh', 30, 1200, 1320, 0.65 / 60], ['deh', 30, 1320, 1440, 0.65 / 60], ['ewh', 35, 300, 420, 4 / 60],
-        ['ewh', 35, 1100, 1440, 4 / 60],
-        ['cm', 10, 300, 450, 1.5 / 60], ['cm', 10, 1020, 1140, 1.5 / 60], ['pf', 180, 1, 540, 1 / 60],
-        ['pf', 180, 900, 1440, 1 / 60]]
     loc = np.array([105, 105, 105, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 55, 60, 1440, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 35, 35, 10, 10, 180, 180])
     lb = np.array([539, 839, 1199, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 59, 299, 0, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 299, 1099, 299, 1019, 0, 899])
     ub = np.array([779, 1079, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 299, 479, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 419, 1439, 449, 1139, 539, 1439])
-    cost = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
-    cost2 = np.array([0.6/60, 0.6/60, 0.6/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 0.38/60, 0.8/60, 0.5/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 1.5/60, 1.5/60, 0.8/60, 0.8/60, 0.54/60, 0.54/60])
-    return loc, lb, ub, cost2
+    #ps = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
+    ps2 = np.array([0.6/60, 0.6/60, 0.6/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 0.38/60, 0.8/60, 0.5/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 1.5/60, 1.5/60, 0.8/60, 0.8/60, 0.54/60, 0.54/60])
+    return loc, lb, ub, ps2
 
 
 
@@ -103,17 +107,17 @@ def getnsa():
 def getPricePerMin():
     price_per_min = np.zeros(1440)
     price_per_min[0:60], price_per_min[60:120], price_per_min[120:180], price_per_min[
-                                                                        180:240] = 1.7/60, 1.4/60, 1.1/60, 0.8/60
+                                                                        180:240] = 1.7, 1.4, 1.1, 0.8
     price_per_min[240:300], price_per_min[300:360], price_per_min[360:420], price_per_min[
-                                                                            420:480] = 0.9/60, 1.3/60, 1.5/60, 2.1/60
+                                                                            420:480] = 0.9, 1.3, 1.5, 2.1
     price_per_min[480:540], price_per_min[540:600], price_per_min[600:660], price_per_min[
-                                                                            660:720] = 2.4/60, 2.5/60, 2.7/60, 3/60
+                                                                            660:720] = 2.4, 2.5, 2.7, 3
     price_per_min[720:780], price_per_min[780:840], price_per_min[840:899], price_per_min[
-                                                                            900:959] = 3.1/60, 3.2/60, 3.3/60, 3.9/60
+                                                                            900:959] = 3.1, 3.2, 3.3, 3.9
     price_per_min[960:1020], price_per_min[1020:1080], price_per_min[1080:1140], price_per_min[
-                                                                                 1140:1200] = 4.1/60, 3.7/60, 3.2/60, 3.1/60
+                                                                                 1140:1200] = 4.1, 3.7, 3.2, 3.1
     price_per_min[1200:1260], price_per_min[1260:1320], price_per_min[1320:1380], price_per_min[
-                                                                                  1380:1440] = 3/60, 2.8/60, 2.4/60, 1.9/60
+                                                                                  1380:1440] = 3, 2.8, 2.4, 1.9
     return price_per_min
 
 
@@ -126,11 +130,11 @@ def getPricePerMin():
 # calculate wtr average as per the equation
 
 
-def wtr_calc(st):
+def wtr_calc(app_st):
     val1, val2 = 0, 0
     loc, lb, ub, cost = get_appliances()
     for x in range(36):
-        val1 += (st[x] - lb[x])
+        val1 += (app_st[x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
     return val1 / val2
 
@@ -184,11 +188,11 @@ def calculate_par(app_st):
 def multiobjective(eb, par, wtr, cpr):
     return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b
 
-def objfun(app_st):
-    eb = getBill(app_st)
-    par = calculate_par(app_st)
-    wtr = wtr_calc(app_st)
-    cpr = calc_cpr(app_st)
-    a = getBill(app_st)
-    b = calculate_par(app_st)
+def objfun(eb, par, wtr, cpr, a,b):
     return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
+
+def position_initalize(lb, ub, loc):
+    positions = np.zeros(len(lb))
+    for x in range(len(lb)):
+        positions[x] = np.random.randint(lb[x], abs(ub[x]-loc[x]))
+    return positions

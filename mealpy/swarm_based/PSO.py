@@ -6,6 +6,8 @@
 
 import numpy as np
 from copy import deepcopy
+
+import support_methods
 from mealpy.optimizer import Optimizer
 
 
@@ -90,7 +92,7 @@ class BasePSO(Optimizer):
         Returns:
             list: wrapper of solution with format [position, target, velocity, local_pos, local_fit]
         """
-        position = self.generate_position(lb, ub, loc)
+        position = support_methods.position_initalize(lb, ub, loc)
         position = self.amend_position(position, lb, ub, loc)
         target = self.get_target_wrapper(position)
         velocity = np.random.uniform(self.v_min, self.v_max)
@@ -112,7 +114,9 @@ class BasePSO(Optimizer):
         Returns:
             Amended position (make the position is in bound)
         """
-        return np.where(np.logical_and(lb <= position, position <= ub-loc), position, np.random.uniform(lb, ub-loc))
+        solution = np.clip(position, lb, abs(ub - loc))
+        solution_int = solution.astype(int)
+        return solution_int
 
     def evolve(self, epoch):
         """

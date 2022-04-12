@@ -1,117 +1,83 @@
-# ------------------------------------------------------------------------------+
-#
-#   Nathan A. Rooy
-#   Simple Particle Swarm Optimization (PSO) with Python
-#   July, 2016
-#
-# ------------------------------------------------------------------------------+
+import sys
+import numpy as np
 
-# --- IMPORT DEPENDENCIES ------------------------------------------------------+
+class PSO:
 
-from __future__ import division
-import random
-import math
-import matplotlib as plt
+    def __init__(self, particles, velocities, fitness_function,
+                 w=0.8, c_1=1, c_2=1, max_iter=100, auto_coef=True):
+        self.particles = particles
+        self.velocities = velocities
+        self.fitness_function = fitness_function
 
-
-# --- COST FUNCTION ------------------------------------------------------------+
-
-# function we are attempting to optimize (minimize)
-import matplotlib.pyplot
+        self.N = len(self.particles)
+        self.w = w
+        self.c_1 = c_1
+        self.c_2 = c_2
+        self.auto_coef = auto_coef
+        self.max_iter = max_iter
 
 
-def func1(x):
-    total = 0
-    for i in range(len(x)):
-        total += x[i] ** 2
-    return total
+        self.p_bests = self.particles
+        self.p_bests_values = self.fitness_function(self.particles)
+        self.g_best = self.p_bests[0]
+        self.g_best_value = self.p_bests_values[0]
+        self.update_bests()
+
+        self.iter = 0
+        self.is_running = True
+        self.update_coef()
+
+    def __str__(self):
+        return f'[{self.iter}/{self.max_iter}] $w$:{self.w:.3f} - $c_1$:{self.c_1:.3f} - $c_2$:{self.c_2:.3f}'
+
+    def next(self):
+        if self.iter > 0:
+            self.move_particles()
+            self.update_bests()
+            self.update_coef()
+
+        self.iter += 1
+        self.is_running = self.is_running and self.iter < self.max_iter
+        return self.is_running
+
+    def update_coef(self):
+        if self.auto_coef:
+            t = self.iter
+            n = self.max_iter
+            self.w = (0.4/n**2) * (t - n) ** 2 + 0.4
+            self.c_1 = -3 * t / n + 3.5
+            self.c_2 =  3 * t / n + 0.5
+
+    def move_particles(self):
+
+        # add inertia
+        new_velocities = self.w * self.velocities
+        # add cognitive component
+        r_1 = np.random.random(self.N)
+        r_1 = np.tile(r_1[:, None], (1, 2))
+        new_velocities += self.c_1 * r_1 * (self.p_bests - self.particles)
+        # add social component
+        r_2 = np.random.random(self.N)
+        r_2 = np.tile(r_2[:, None], (1, 2))
+        g_best = np.tile(self.g_best[None], (self.N, 1))
+        new_velocities += self.c_2 * r_2 * (g_best  - self.particles)
+
+        self.is_running = np.sum(self.velocities - new_velocities) != 0
+
+        # update positions and velocities
+        self.velocities = new_velocities
+        self.particles = self.particles + new_velocities
 
 
-# --- MAIN ---------------------------------------------------------------------+
+    def update_bests(self):
+        fits = self.fitness_function(self.particles)
 
-class Particle:
-    def __init__(self, x0):
-        self.position_i = []  # particle position
-        self.velocity_i = []  # particle velocity
-        self.pos_best_i = []  # best position individual
-        self.err_best_i = -1  # best error individual
-        self.err_i = -1  # error individual
-
-        for i in range(0, num_dimensions):
-            self.velocity_i.append(random.uniform(-1, 1))
-            self.position_i.append(x0[i])
-
-    # evaluate current fitness
-    def evaluate(self, costFunc):
-        self.err_i = costFunc(self.position_i)
-
-        # check to see if the current position is an individual best
-        if self.err_i < self.err_best_i or self.err_best_i == -1:
-            self.pos_best_i = self.position_i
-            self.err_best_i = self.err_i
-
-    # update new particle velocity
-    def update_velocity(self, pos_best_g):
-        w = 0.7  # constant inertia weight (how much to weigh the previous velocity)
-        c1 = 1  # cognative constant
-        c2 = 2  # social constant
-
-        for i in range(0, num_dimensions):
-            r1 = random.random()
-            r2 = random.random()
-
-            vel_cognitive = c1 * r1 * (self.pos_best_i[i] - self.position_i[i])
-            vel_social = c2 * r2 * (pos_best_g[i] - self.position_i[i])
-            self.velocity_i[i] = w * self.velocity_i[i] + vel_cognitive + vel_social
-
-    # update the particle position based off new velocity updates
-    def update_position(self, bounds):
-        for i in range(0, num_dimensions):
-            self.position_i[i] = self.position_i[i] + self.velocity_i[i]
-
-            # adjust maximum position if necessary
-            if self.position_i[i] > bounds[i][1]:
-                self.position_i[i] = bounds[i][1]
-
-            # adjust minimum position if neseccary
-            if self.position_i[i] < bounds[i][0]:
-                self.position_i[i] = bounds[i][0]
-
-
-class PSO():
-    def __init__(self, costFunc, x0, bounds, num_particles, maxiter):
-        global num_dimensions
-
-        num_dimensions = len(x0)
-        err_best_g = -1  # best error for group
-        pos_best_g = []  # best position for group
-
-        # establish the swarm
-        swarm = []
-        for i in range(0, num_particles):
-            swarm.append(Particle(x0))
-
-        # begin optimization loop
-        i = 0
-        while i < maxiter:
-            # print i,err_best_g
-            # cycle through particles in swarm and evaluate fitness
-            for j in range(0, num_particles):
-                swarm[j].evaluate(costFunc)
-
-                # determine if current particle is the best (globally)
-                if swarm[j].err_i < err_best_g or err_best_g == -1:
-                    pos_best_g = list(swarm[j].position_i)
-                    err_best_g = float(swarm[j].err_i)
-
-            # cycle through swarm and update velocities and position
-            for j in range(0, num_particles):
-                swarm[j].update_velocity(pos_best_g)
-                swarm[j].update_position(bounds)
-            i += 1
-
-        # print final results
-        print('FINAL:')
-        print(pos_best_g)
-        print(err_best_g)
-
+        for i in range(len(self.particles)):
+            # update best personnal value (cognitive)
+            if fits[i] < self.p_bests_values[i]:
+                self.p_bests_values[i] = fits[i]
+                self.p_bests[i] = self.particles[i]
+                # update best global value (social)
+                if fits[i] < self.g_best_value:
+                    self.g_best_value = fits[i]
+                    self.g_best = self.particles[i]

@@ -31,9 +31,15 @@ price_per_min = getPricePerMin()
 consumption_matrix = np.zeros((36, 1440))
 
 consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions = initialize()
-
-
-
+## test multi objective ##
+electricity = newBill(app_st)
+a = newBill(app_st)
+b = calculate_par(app_st)
+par = calculate_par(app_st)
+wtr = wtr_calc(app_st)
+cpr = calc_cpr(app_st)
+FF = objfun(electricity, par, wtr, cpr, a, b)
+print("Objective value= ", FF)
 #p = psoo.PSO(getBill, app_st, bounds=bounds, num_particles=20, maxiter=100)
 
 
@@ -44,25 +50,25 @@ problem_dict1 = {
          "minmax": "min",
          "loc": loc.tolist()
      }
-epoch = 50
-pop_size = 36
+epoch = 10
+pop_size = 20
 ST = 0.8
 PD = 0.2
 SD = 0.1
 c1 = 2.05
 c2 = 2.05
 w_min = 0.4
-w_max = 0.9
+w_max = 1
 
-model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD)
-best_position, best_fitness = model.solve()
+#model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD)
+#best_position, best_fitness = model.solve()
 
 model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max)
 best_position2, best_fitness2 = model2.solve()
-best_position2 = np.round(best_position2)
+#best_position2 = np.round(best_position2)
 #export_convergence_chart(model.history.list_population, title='Runtime chart', y_label="Second", x_label="Iteration")
 
-print(f"Solution: {best_position}, Fitness: {best_fitness}")
+#print(f"Solution: {best_position}, Fitness: {best_fitness}")
 
 print(f"Solution: {np.round(best_position2)}, Fitness: {best_fitness2}")
 
@@ -88,6 +94,6 @@ lastval = multiobjective(eb_sum, par_val, wtr_avg_val, cpr_val)
 print("PAR value: ", par_val)
 print("WTR Average time: ", wtr_avg_val)
 print("CPR value is: ", cpr_val)
-print("uc comfort is:", uc)
+print("uc val is:", uc)
 print("Multi-objective value is: ", lastval)
 print(consumption_matrix)
