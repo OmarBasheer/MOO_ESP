@@ -87,17 +87,17 @@ def getnsa():
 def getPricePerMin():
     price_per_min = np.zeros(1440)
     price_per_min[0:60], price_per_min[60:120], price_per_min[120:180], price_per_min[
-                                                                        180:240] = 1.7, 1.4, 1.1, 0.8
+                                                                        180:240] = 1.8, 1.4, 1.2, 0.8
     price_per_min[240:300], price_per_min[300:360], price_per_min[360:420], price_per_min[
-                                                                            420:480] = 0.9, 1.3, 1.5, 2.1
+                                                                            420:480] = 0.6, 0.5, 0.4, 1.3
     price_per_min[480:540], price_per_min[540:600], price_per_min[600:660], price_per_min[
-                                                                            660:720] = 2.4, 2.5, 2.7, 3
+                                                                            660:720] = 1.8, 2.2, 2.4, 2.6
     price_per_min[720:780], price_per_min[780:840], price_per_min[840:899], price_per_min[
-                                                                            900:959] = 3.1, 3.2, 3.3, 3.9
+                                                                            900:959] = 2.7, 2.9, 2.9, 3
     price_per_min[960:1020], price_per_min[1020:1080], price_per_min[1080:1140], price_per_min[
-                                                                                 1140:1200] = 4.1, 3.7, 3.2, 3.1
+                                                                                 1140:1200] = 3, 3, 2.8, 2.6
     price_per_min[1200:1260], price_per_min[1260:1320], price_per_min[1320:1380], price_per_min[
-                                                                                  1380:1440] = 3, 2.8, 2.4, 1.9
+                                                                                  1380:1440] = 2.7, 2.7, 2.3, 2
     return price_per_min
 
 
@@ -117,7 +117,6 @@ def getWTR(app_st):
         val1 += (app_st[x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
     return val1 / val2
-
 
 
 ## fixed
@@ -141,9 +140,11 @@ def getCPR(app_st):
                 total_cpr += 1
     return total_cpr / (q*n)
 
+
 def getconsumptionpermin():
     main.consumption_mins.sort()
     return main.consumption_per_min
+
 
 def getUC(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
@@ -168,6 +169,7 @@ def getPAR(app_st):
 def multiobjective(eb, par, wtr, cpr):
     return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b
 
+
 def objfun(app_st, a,b):
     eb = getBill(app_st)
     par = getPAR(app_st)
@@ -175,8 +177,19 @@ def objfun(app_st, a,b):
     cpr = getCPR(app_st)
     return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
 
-def position_initalize(lb, ub, loc):
-    positions = np.zeros(len(lb))
-    for x in range(len(lb)):
-        positions[x] = np.random.randint(lb[x], abs(ub[x]-loc[x]))
+
+def position_initalize(p_num, lb, ub, loc):
+    positions = np.zeros((p_num, len(lb)))
+    for i in range(p_num):
+        for x in range(len(lb)):
+            positions[i][x] = np.random.randint(lb[x], abs(ub[x]-loc[x]))
     return positions
+
+
+def validate_position(position, lb, ub, loc):
+    positions = position.astype(int)
+    for x in range(positions):
+        if not positions[x] in range(lb[x], abs(ub[x] - loc[x])):
+            positions[x] = np.random.randint(lb[x], abs(ub[x]-loc[x]))
+    return positions
+

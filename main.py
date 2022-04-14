@@ -11,7 +11,7 @@ from mealpy.utils.visualize import *
 
 
 ###############
-
+from test import PSOE
 
 num_sa = 36  # Number of appliances put to test
 num_slots = 1440  # Number of time slots, 1 minute each, demonstrating a full day
@@ -35,6 +35,10 @@ consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions = ini
 electricity = getBill(app_st)
 a = getBill(app_st)
 b = getPAR(app_st)
+
+k, best_params, error = PSOE(objfun, p_num=10, N=1, scale=1, w=1, r=0.99, c1=1, c2=1, a=a, b=b, eps=1e-5, lb=lb, ub=ub, loc=loc, early_stopping=100, max_iter=1000, random_state=None)
+
+print(best_params)
 #par = calculate_par(app_st)
 #wtr = wtr_calc(app_st)
 #cpr = calc_cpr(app_st)
@@ -44,13 +48,15 @@ b = getPAR(app_st)
 
 
 problem_dict1 = {
-         "fit_func": getBill,
+         "fit_func": objfun,
          "lb": lb.tolist(),
          "ub": ub.tolist(),
          "minmax": "min",
-         "loc": loc.tolist()
+         "loc": loc.tolist(),
+         "a": a,
+         "b": b
      }
-epoch = 750
+epoch = 10
 pop_size = 10
 ST = 0.8
 PD = 0.2
@@ -60,17 +66,17 @@ c2 = 2.05
 w_min = 0.4
 w_max = 1
 
-model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD)
-best_position, best_fitness = model.solve()
+#model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD)
+#best_position, best_fitness = model.solve()
 
-model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max)
-best_position2, best_fitness2 = model2.solve()
+#model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max)
+#best_position2, best_fitness2 = model2.solve()
 #best_position2 = np.round(best_position2)
 #export_convergence_chart(model.history.list_population, title='Runtime chart', y_label="Second", x_label="Iteration")
 
-print(f"Solution: {best_position}, Fitness: {best_fitness}")
+#print(f"Solution: {best_position}, Fitness: {best_fitness}")
 
-print(f"Solution: {best_position2}, Fitness: {best_fitness2}")
+#print(f"Solution: {best_position2}, Fitness: {best_fitness2}")
 
 
 

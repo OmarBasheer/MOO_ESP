@@ -75,7 +75,6 @@ class BasePSO(Optimizer):
         self.c2 = self.validator.check_float("c2", c2, (0, 5.0))
         self.w_min = self.validator.check_float("w_min", w_min, (0, 0.5))
         self.w_max = self.validator.check_float("w_max", w_max, [0.5, 2.0])
-
         self.nfe_per_epoch = self.pop_size
         self.sort_flag = False
         self.v_max = 0.5 * (self.problem.ub - self.problem.lb)
@@ -205,7 +204,6 @@ class PPSO(Optimizer):
         super().__init__(problem, kwargs)
         self.epoch = self.validator.check_int("epoch", epoch, [1, 100000])
         self.pop_size = self.validator.check_int("pop_size", pop_size, [10, 10000])
-
         self.nfe_per_epoch = self.pop_size
         self.sort_flag = False
         self.v_max = 0.5 * (self.problem.ub - self.problem.lb)
