@@ -83,3 +83,25 @@ def getBill(x):
 
         total += app_sum
     return total
+
+def getBill(x):
+    c = 0.0333
+    l = 1.543
+    app_sum, total = 0, 0
+    loc, lb, ub, cost = get_appliances()
+    price = getPricePerMin()
+    for i in range(len(x)):
+        temp = round(x[i])
+        appliance_length = loc[i]
+        if appliance_length > ub[i]:
+            appliance_length -= 1
+        for j in range(appliance_length+1):
+            if cost[i] > c:
+                if not temp+j >= 1440:
+                    app_sum += (cost[i] * price[temp+j] * l)
+                else:
+                    app_sum += (cost[i] * price[1439] * l)
+            else:
+                app_sum += (cost[i] * price[temp])
+        total += app_sum
+    return total

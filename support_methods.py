@@ -12,7 +12,7 @@ def Average(lst):
 
 def initialize():
     sa_num = range(36)
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, cost = getAppliances()
     price_per_min = getPricePerMin()
     positions = []
     app_st = []
@@ -35,50 +35,30 @@ def initialize():
             consumption_per_min[mint] += cost[x]
     return consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions
 
-def getBill(x):
-    c = 0.0333
-    l = 1.543
-    app_sum, total = 0, 0
-    loc, lb, ub, cost = get_appliances()
-    price = getPricePerMin()
-    for i in range(len(x)):
-        temp = round(x[i])
-        appliance_length = loc[i]
-        if appliance_length > ub[i]:
-            appliance_length -= 1
-        for j in range(appliance_length+1):
-            if cost[i] > c:
-                if not temp+j >= 1440:
-                    app_sum += (cost[i] * price[temp+j] * l)
-                else:
-                    app_sum += (cost[i] * price[1439] * l)
-            else:
-                app_sum += (cost[i] * price[temp])
-        total += app_sum
-    return total
 
-def newBill(app_st):
+def getBill(app_st):
     c = 0.0333
     l = 1.543
-    loc, lb, ub, ps = get_appliances()
+    loc, lb, ub, ps = getAppliances()
     consumption_per_min = np.zeros(1440)
     price = getPricePerMin()
     total_cost = 0
     for x in range(36): #0-35
-        test = np.rint(app_st[x]).astype("int32")
-        for y in range(test, test+loc[x]): #appliance start time -> starttime+LOC
+        test = np.rint(app_st[x]).astype(int)
+        for y in range(test, test+loc[x]): # appliance start time -> start time+LOC
             consumption_per_min[y] += ps[x]
-    for i in range(len(consumption_per_min)): #loop from 0 - 1439
+    for i in range(len(consumption_per_min)): # loop from 0 - 1439
         if consumption_per_min[i] > c:
             total_cost += price[i] * consumption_per_min[i] * l
         else:
             total_cost += price[i] * consumption_per_min[i]
     return total_cost
 
+
 def getConsumptionMatrix(app_st):
     consumption_matrix = np.zeros((36, 1440))
     consumption_per_min = np.zeros(1440)
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, cost = getAppliances()
     price = getPricePerMin()
     for x in range(36):
         for j in range(round(app_st[x]), round(app_st[x])+loc[x]):
@@ -86,14 +66,14 @@ def getConsumptionMatrix(app_st):
             consumption_per_min[j] = cost[x]
     return consumption_matrix, consumption_per_min
 
-def get_appliances():
+
+def getAppliances():
     loc = np.array([105, 105, 105, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 55, 60, 1440, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 35, 35, 10, 10, 180, 180])
     lb = np.array([539, 839, 1199, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 59, 299, 0, 0, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 299, 1099, 299, 1019, 0, 899])
     ub = np.array([779, 1079, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 299, 479, 1439, 119, 239, 359, 479, 599, 719, 839, 959, 1079, 1199, 1319, 1439, 419, 1439, 449, 1139, 539, 1439])
     #ps = np.array([1.5/60, 1.5/60, 1.5/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.2/60, 1.15/60, 5.4/60, 0.5/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 0.65/60, 4/60, 4/60, 1.5/60, 1.5/60, 1/60, 1/60])
     ps2 = np.array([0.6/60, 0.6/60, 0.6/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 1/60, 0.38/60, 0.8/60, 0.5/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 0.05/60, 1.5/60, 1.5/60, 0.8/60, 0.8/60, 0.54/60, 0.54/60])
     return loc, lb, ub, ps2
-
 
 
 def getnsa():
@@ -130,9 +110,9 @@ def getPricePerMin():
 # calculate wtr average as per the equation
 
 
-def wtr_calc(app_st):
+def getWTR(app_st):
     val1, val2 = 0, 0
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, cost = getAppliances()
     for x in range(36):
         val1 += (app_st[x] - lb[x])
         val2 += (ub[x] - lb[x] - loc[x])
@@ -141,13 +121,13 @@ def wtr_calc(app_st):
 
 
 ## fixed
-def calc_cpr(app_st):
+def getCPR(app_st):
     nsa, pns = getnsa()
     c = 0.0333
     q = len(nsa)
     n = 1440
     l = 1.543
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, cost = getAppliances()
     consumption_per_min = np.zeros(1440)
     price = getPricePerMin()
     total_cpr = 0
@@ -165,14 +145,14 @@ def getconsumptionpermin():
     main.consumption_mins.sort()
     return main.consumption_per_min
 
-def uc_calculate(wtr, cpr):
+def getUC(wtr, cpr):
     return (1 - (wtr + cpr / 2)) * 100
 
 
-def calculate_par(app_st):
+def getPAR(app_st):
     c = 0.0333
     l = 1.543
-    loc, lb, ub, cost = get_appliances()
+    loc, lb, ub, cost = getAppliances()
     consumption_per_min = np.zeros(1440)
     price = getPricePerMin()
     total_cost = 0
@@ -188,7 +168,11 @@ def calculate_par(app_st):
 def multiobjective(eb, par, wtr, cpr):
     return 0.4 * (eb/eb+1) + 0.2 * (par/par+1) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b
 
-def objfun(eb, par, wtr, cpr, a,b):
+def objfun(app_st, a,b):
+    eb = getBill(app_st)
+    par = getPAR(app_st)
+    wtr = getWTR(app_st)
+    cpr = getCPR(app_st)
     return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
 
 def position_initalize(lb, ub, loc):

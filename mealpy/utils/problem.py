@@ -227,6 +227,12 @@ class Problem:
         Returns:
             Amended position (make the position is in bound)
         """
-        solution = np.clip(position, lb, abs(ub - loc))
-        solution_int = solution.astype(int)
-        return solution_int
+        position = position.astype(int)
+        for x in range(len(position)):
+            if x == 17:
+                position[x] = 0
+            if position[x] in range(lb[x], abs(ub[x]-loc[x])):
+                position[x] = position[x]
+            else:
+                position[x] = lb[x]
+        return position
