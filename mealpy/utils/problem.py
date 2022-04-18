@@ -162,8 +162,9 @@ class Problem:
             else:
                 self.logger.error("Please enter your 'amend_position' as a callable function, and it needs to return amended solution.")
                 exit(0)
-       # result = self.fit_func(tested_solution, kwargs["a"], kwargs["b"])
-        result = self.fit_func(tested_solution)
+        tested_solution = self.amend_position(tested_solution, self.lb, self.ub, self.loc)
+        result = self.fit_func(tested_solution, kwargs["a"], kwargs["b"])
+        #result = self.fit_func(tested_solution)
         if isinstance(result, list) or isinstance(result, np.ndarray):
             self.n_objs = len(result)
             self.obj_is_list = True
@@ -236,5 +237,5 @@ class Problem:
                 position[x] = position[x]
             else:
                 position[x] = lb[x]
-        print(position)
+        #print(position)
         return position

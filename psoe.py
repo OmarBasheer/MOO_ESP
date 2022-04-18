@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from support_methods import *
+from datetime import datetime
 
 
 def PSOE(obj, p_num, N, scale, w, r, c1, c2, a, b, eps, lb, ub, loc,
@@ -11,15 +12,24 @@ def PSOE(obj, p_num, N, scale, w, r, c1, c2, a, b, eps, lb, ub, loc,
     # np.random.seed(random_state)
     params_num = N
     p = position_initalize(p_num, lb, ub, loc)
-
     v = np.random.normal(scale=scale, size=(p_num, params_num))
-    # t = np.linspace(0, 4 * np.pi, 101)
-    error = obj(p[0], a, b)
+    #t = np.linspace(0, 4 * np.pi, 101)
+    error = np.zeros(p_num)
+    for i in range(p_num):
+        cost = getBill(p[i])
+        par = getPAR(p[i])
+        cpr = getCPR(p[i])
+        wtr = getWTR(p[i])
+        error[i] = obj(cost, par, wtr, cpr, a, b)
     pbest = p.copy()
     gbest = p[error.argmin()]
     best_params = [gbest]
     e = [error.min()]
     iter_num = 0
+    AllCost = np.zeros([max_iter, 1])
+    AllPAR = np.zeros([max_iter, 1])
+    AllWTR = np.zeros([max_iter, 1])
+    AllCPR = np.zeros([max_iter, 1])
     count = 0
     if verbose == True:
         if len(gbest) <= 7:
@@ -29,20 +39,30 @@ def PSOE(obj, p_num, N, scale, w, r, c1, c2, a, b, eps, lb, ub, loc,
 
     # main algorithm
     while error.min() > eps and iter_num < max_iter and count < early_stopping:
+        start = datetime.now()
         # create random numbers, used for updating particle position
         r1 = np.random.uniform(size=(params_num))
         r2 = np.random.uniform(size=(params_num))
         r1 = np.tile(r1, p_num).reshape(p_num, -1)
         r2 = np.tile(r2, p_num).reshape(p_num, -1)
+        errorbest = np.zeros(p_num)
         for i in range(p_num):
             # update particle position
             v = w * v + c1 * r1 * (pbest - p) + c2 * r2 * (gbest - p)
             w = w * r
             p = p + v
-        p = validate_position(p, lb, ub, loc)
+            p = validate_position(p_num, p, lb, ub, loc)
         # calculate error
-        error = obj(p[0], a, b)
-        errorbest = obj(p[0], a, b)
+            cost = getBill(p[i])
+            par = getPAR(p[i])
+            cpr = getCPR(p[i])
+            wtr = getWTR(p[i])
+            error[i] = obj(cost, par, wtr, cpr, a, b)
+            bestcost = getBill(pbest[i])
+            bestpar = getPAR(pbest[i])
+            bestcpr = getCPR(pbest[i])
+            bestwtr = getWTR(pbest[i])
+            errorbest[i] = obj(bestcost,bestpar,bestwtr,bestcpr, a, b)
         # update global best
         gbest = p[error.argmin()]
         # update personal best
@@ -57,12 +77,13 @@ def PSOE(obj, p_num, N, scale, w, r, c1, c2, a, b, eps, lb, ub, loc,
             count = 0
         e.append(error.min())
         best_params.append(gbest)
+        end = datetime.now()
         # print result in terminal
         if verbose:
             if len(gbest) <= 7:
                 print(f'Iteration: {iter_num}\tbest params = {gbest}\n\t\terror = {e[-1]:.4f}')
             else:
-                print(f'Iteration: {iter_num}\terror = {e[-1]:.4f}')
+                print(f'Iteration: {iter_num}\terror = {e[-1]:.4f}, time taken: {str(end-start)[5:]}')
 
     # in case max iteration reached
     if iter_num == max_iter:
