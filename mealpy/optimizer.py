@@ -108,7 +108,7 @@ class Optimizer:
             # We don't sort the population
             _, self.g_best = self.get_global_best_solution(self.pop)
 
-    def get_target_wrapper(self, position, a, b):
+    def get_target_wrapper(self, position, a, b, s=None):
         """
         Args:
             position (nd.array): position (nd.array): 1-D numpy array
@@ -116,13 +116,13 @@ class Optimizer:
         Returns:
             [fitness, [obj1, obj2,...]]
         """
-        objs = self.problem.fit_func(position, a, b)
+        objs = self.problem.fit_func(position, a, b, s)
         if not self.problem.obj_is_list:
             objs = [objs]
         fit = np.dot(objs, self.problem.obj_weights)
         return [fit, objs]
 
-    def create_solution(self, lb=None, ub=None, loc=None, a=None, b=None):
+    def create_solution(self, lb=None, ub=None, loc=None, a=None, b=None, s=None):
         """
         To get the position, target wrapper [fitness and obj list]
             + A[self.ID_POS]                  --> Return: position
@@ -140,7 +140,7 @@ class Optimizer:
 
         position = self.generate_position(lb, ub, loc)
         position = self.amend_position(position, lb, ub, loc)
-        target = self.get_target_wrapper(position, a, b)
+        target = self.get_target_wrapper(position, a, b, s)
         return [position, target]
 
     def before_evolve(self, epoch):
@@ -257,26 +257,27 @@ class Optimizer:
         """
         a = self.a
         b = self.b
+        s = self.s
         if pop_size is None:
             pop_size = self.pop_size
         pop = []
         if self.mode == "thread":
             with parallel.ThreadPoolExecutor() as executor:
-                list_executors = [executor.submit(self.create_solution, self.problem.lb, self.problem.ub, a, b) for _ in range(pop_size)]
+                list_executors = [executor.submit(self.create_solution, self.problem.lb, self.problem.ub, a, b, s) for _ in range(pop_size)]
                 # This method yield the result everytime a thread finished their job (not by order)
                 for f in parallel.as_completed(list_executors):
                     pop.append(f.result())
         elif self.mode == "process":
             with parallel.ProcessPoolExecutor() as executor:
-                list_executors = [executor.submit(self.create_solution, self.problem.lb, self.problem.ub, a, b) for _ in range(pop_size)]
+                list_executors = [executor.submit(self.create_solution, self.problem.lb, self.problem.ub, a, b, s) for _ in range(pop_size)]
                 # This method yield the result everytime a cpu finished their job (not by order).
                 for f in parallel.as_completed(list_executors):
                     pop.append(f.result())
         else:
-            pop = [self.create_solution(self.problem.lb, self.problem.ub, self.problem.loc, a, b) for _ in range(0, pop_size)]
+            pop = [self.create_solution(self.problem.lb, self.problem.ub, self.problem.loc, a, b, s) for _ in range(0, pop_size)]
         return pop
 
-    def update_target_wrapper_population(self, pop, a, b):
+    def update_target_wrapper_population(self, pop, a, b, s=None):
         """
         Update target wrapper for input population
 
@@ -289,17 +290,17 @@ class Optimizer:
         pos_list = [agent[self.ID_POS] for agent in pop]
         if self.mode == "thread":
             with parallel.ThreadPoolExecutor() as executor:
-                list_results = executor.map(self.get_target_wrapper, pos_list, a, b)  # Return result not the future object
+                list_results = executor.map(self.get_target_wrapper, pos_list, a, b, s)  # Return result not the future object
                 for idx, target in enumerate(list_results):
                     pop[idx][self.ID_TAR] = target
         elif self.mode == "process":
             with parallel.ProcessPoolExecutor() as executor:
-                list_results = executor.map(self.get_target_wrapper, pos_list, a, b)  # Return result not the future object
+                list_results = executor.map(self.get_target_wrapper, pos_list, a, b, s)  # Return result not the future object
                 for idx, target in enumerate(list_results):
                     pop[idx][self.ID_TAR] = target
         else:
             for idx, pos in enumerate(pos_list):
-                pop[idx][self.ID_TAR] = self.get_target_wrapper(pos, a, b)
+                pop[idx][self.ID_TAR] = self.get_target_wrapper(pos, a, b, s)
         return pop
 
     def get_global_best_solution(self, pop: list):

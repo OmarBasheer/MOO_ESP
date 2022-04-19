@@ -163,7 +163,7 @@ class Problem:
                 self.logger.error("Please enter your 'amend_position' as a callable function, and it needs to return amended solution.")
                 exit(0)
         tested_solution = self.amend_position(tested_solution, self.lb, self.ub, self.loc)
-        result = self.fit_func(tested_solution, kwargs["a"], kwargs["b"])
+        result = self.fit_func(tested_solution, kwargs["a"], kwargs["b"], kwargs["s"])
         #result = self.fit_func(tested_solution)
         if isinstance(result, list) or isinstance(result, np.ndarray):
             self.n_objs = len(result)
@@ -229,13 +229,8 @@ class Problem:
         Returns:
             Amended position (make the position is in bound)
         """
-        position = position.astype(int)
+        positions = position.astype(int)
         for x in range(len(position)):
-            if x == 17:
-                position[x] = 0
-            if position[x] in range(lb[x], abs(ub[x]-loc[x])):
-                position[x] = position[x]
-            else:
-                position[x] = lb[x]
-        #print(position)
-        return position
+            if not positions[x] in range(lb[x], abs(ub[x] - loc[x])):
+                positions[x] = np.random.randint(lb[x], abs(ub[x] - loc[x]))
+        return positions

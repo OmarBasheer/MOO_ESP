@@ -36,8 +36,6 @@ def initialize(s=None):
     return consumption_per_min, app_st, app_et, bounds, consumption_matrix, positions
 
 
-
-
 def getBill(app_st, s=None):
     c = 0.0333
     l = 1.543
@@ -87,7 +85,7 @@ def getAppliances(s=None):
         ps = np.array(
             [0.6 / 60, 0.6 / 60, 1 / 60, 1 / 60, 1 / 60, 1 / 60, 1 / 60, 0.5 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60,
              0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60, 0.05 / 60,
-             1.5 / 60, 1.5 / 60, 0.8 / 60, 0.54 / 60])
+             1.5 / 60, 0.8 / 60, 0.54 / 60])
     elif s==2:
         loc = np.array([105, 105, 30, 30, 30, 30, 30, 30, 30, 1440, 30, 30, 30, 30, 30, 35, 35, 10, 10, 180])
         lb = np.array(
@@ -239,17 +237,17 @@ def getWTR(app_st, s=None):
 
 
 ## fixed
-def getCPR(app_st):
+def getCPR(app_st, s=None):
     nsa, pns = getnsa()
     c = 0.0333
     q = len(nsa)
     n = 1440
     l = 1.543
-    loc, lb, ub, cost = getAppliances()
+    loc, lb, ub, cost = getAppliances(s)
     consumption_per_min = np.zeros(1440)
-    price = getPricePerMin()
+    price = getPricePerMin(s)
     total_cpr = 0
-    for x in range(36):
+    for x in range(len(app_st)):
         test = np.rint(app_st[x]).astype("int32")
         for y in range(test, test+loc[x]):
             consumption_per_min[y] += cost[x]
@@ -290,10 +288,10 @@ def multiobjective(eb, par, wtr, cpr, a, b):
 
 
 def objfun(app_st, a, b, s=None):
-    eb = getBill(app_st)
-    par = getPAR(app_st)
-    wtr = getWTR(app_st)
-    cpr = getCPR(app_st)
+    eb = getBill(app_st, s)
+    par = getPAR(app_st, s)
+    wtr = getWTR(app_st, s)
+    cpr = getCPR(app_st, s)
     return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
 
 

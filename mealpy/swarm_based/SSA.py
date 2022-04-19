@@ -55,7 +55,7 @@ class BaseSSA(Optimizer):
     sparrow search algorithm. Systems Science & Control Engineering, 8(1), pp.22-34.
     """
 
-    def __init__(self, problem, epoch=10000, pop_size=100, ST=0.8, PD=0.2, SD=0.1, a=1, b=2, **kwargs):
+    def __init__(self, problem, epoch=10000, pop_size=100, ST=0.8, PD=0.2, SD=0.1, **kwargs):
         """
         Args:
             problem (dict): The problem dictionary
@@ -75,8 +75,10 @@ class BaseSSA(Optimizer):
         self.n2 = int(self.SD * self.pop_size)
         self.nfe_per_epoch = 2 * self.pop_size - self.n2
         self.sort_flag = True
-        self.a = a
-        self.b = b
+        self.s = kwargs["s"]
+        self.a = kwargs["a"]
+        self.b = kwargs["b"]
+
     def amend_position(self, position=None, lb=None, ub=None, loc=None):
         """
         Depend on what kind of problem are we trying to solve, there will be an different amend_position
@@ -90,7 +92,11 @@ class BaseSSA(Optimizer):
         Returns:
             Amended position (make the position is in bound)
         """
-        return np.where(np.logical_and(lb <= position, position <= ub-loc), position, np.random.uniform(lb, ub-loc))
+        positions = position.astype(int)
+        for x in range(len(position)):
+            if not positions[x] in range(lb[x], abs(ub[x] - loc[x])):
+                positions[x] = np.random.randint(lb[x], abs(ub[x] - loc[x]))
+        return positions
 
     def evolve(self, epoch):
         """
@@ -122,7 +128,7 @@ class BaseSSA(Optimizer):
             pos_new = self.amend_position(x_new, self.problem.lb, self.problem.ub, self.problem.loc)
             pop_new.append([pos_new, None])
 
-        pop_new = self.update_target_wrapper_population(pop_new, self.a, self.b)
+        pop_new = self.update_target_wrapper_population(pop_new, self.a, self.b, self.s)
         pop_new = self.greedy_selection_population(self.pop, pop_new)
         pop_new, best, worst = self.get_special_solutions(pop_new, best=1, worst=1)
         g_best, g_worst = best[0], worst[0]
@@ -138,7 +144,7 @@ class BaseSSA(Optimizer):
                 x_new = g_best[self.ID_POS] + np.random.normal() * np.abs(pop2[idx][self.ID_POS] - g_best[self.ID_POS])
             pos_new = self.amend_position(x_new, self.problem.lb, self.problem.ub, self.problem.loc)
             child.append([pos_new, None])
-        child = self.update_target_wrapper_population(child, self.a, self.b)
+        child = self.update_target_wrapper_population(child, self.a, self.b, self.s)
         child = self.greedy_selection_population(pop2, child)
         self.pop = pop_new[:self.n2] + child
 

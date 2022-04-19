@@ -105,3 +105,35 @@ def getBill(x):
                 app_sum += (cost[i] * price[temp])
         total += app_sum
     return total
+
+
+#k, best_params, error = PSOE(multiobjective, p_num=20, N=36, scale=0.1, w=1, r=0.99, c1=2, c2=2, a=a, b=b, eps=1e-5, lb=lb, ub=ub, loc=loc, early_stopping=100, max_iter=750, random_state=None)
+
+#print(best_params)
+#best_elect = getBill(best_params[len(best_params)-1])
+#par = getPAR(best_params[len(best_params)-1])
+#wtr = getWTR(best_params[len(best_params)-1])
+#cpr = getCPR(best_params[len(best_params)-1])
+#FF = objfun(best_params[len(best_params)-1], a, b)
+#uc = getUC(wtr, cpr)
+#print("best electricity", best_elect)
+#print("best par", par)
+#print("best WTR", wtr)
+#print("best CPR", cpr)
+#print("best UC", uc)
+#print("Objective value= ", FF)
+
+#fMin, bestX, Convergence_curve = ssa.SSA(10, lb, ub, loc, 750, 0.8, 0.2, 36, multiobjective)
+
+#p = psoo.PSO(getBill, app_st, bounds=bounds, num_particles=20, maxiter=100)
+#eb_sumssa = getBill(bestX)
+#par_valssa = getPAR(bestX)
+#wtr_avg_valssa = getWTR(app_st)
+#cpr_valssa = getCPR(app_st)
+#ucssa = getUC(wtr_avg_valssa, cpr_valssa)
+#print("SSA Electricity Price: ", eb_sumssa)
+#print("SSA PAR value: ", par_valssa)
+#print("SSA WTR Average time: ", wtr_avg_valssa)
+#print("SSA CPR value is: ", cpr_valssa)
+#print("SSA uc val is:", ucssa)
+#print("SSA Minimum obtained:", fMin)
