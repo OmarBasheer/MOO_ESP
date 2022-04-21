@@ -92,11 +92,10 @@ class BaseSSA(Optimizer):
         Returns:
             Amended position (make the position is in bound)
         """
-        positions = position.astype(int)
-        for x in range(len(position)):
-            if not positions[x] in range(lb[x], abs(ub[x] - loc[x])):
-                positions[x] = np.random.randint(lb[x], abs(ub[x] - loc[x]))
-        return positions
+        ub1 = ub-loc
+        solution = position.astype(int)
+        solution_int = np.clip(solution, lb, ub1)
+        return solution_int
 
     def evolve(self, epoch):
         """

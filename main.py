@@ -13,7 +13,7 @@ from mealpy.utils.visualize import *
 from psoe import PSOE
 
 ###
-scenario = 7
+scenario = 4
 ###
 
 num_sa = 36  # Number of appliances put to test
@@ -49,18 +49,22 @@ problem_dict1 = {
          "b": b,
          "s": scenario
      }
-epoch = 10
+epoch = 750
 pop_size = 20
-ST = 0.7
+ST = 0.9
 PD = 0.3
-SD = 0.1
-c1 = 2.05
-c2 = 2.05
+SD = 0.3
+c1 = 1
+c2 = 1
 w_min = 0.4
 w_max = 0.9
 
 model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD, a=a, b=b, s=scenario)
 best_position, best_fitness = model.solve()
+
+
+model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max, a=a, b=b, s=scenario)
+best_position2, best_fitness2 = model2.solve()
 
 print("*"*50)
 
@@ -79,10 +83,6 @@ print("SSA uc val is:", ucSSA)
 print("SSA Multi-objective value is: ", lastvalSSA)
 
 print("*"*50)
-
-model2 = BasePSO(problem_dict1, epoch, pop_size, c1, c2, w_min, w_max, a=a, b=b, s=scenario)
-best_position2, best_fitness2 = model2.solve()
-
 print(f"Solution: {best_position2}, Fitness: {best_fitness2}")
 eb_sumPSO = getBill(best_position2, scenario)
 par_valPSO = getPAR(best_position2, scenario)
@@ -106,7 +106,7 @@ wtr_avg_val = getWTR(app_st, scenario)
 cpr_val = getCPR(app_st, scenario)
 uc = getUC(wtr_avg_val, cpr_val)
 lastval = objfun(app_st, a, b, scenario)
-
+print("initial random solution: ", app_st)
 print("Electricity Price: ", eb_sum)
 print("PAR value: ", par_val)
 print("WTR Average time: ", wtr_avg_val)

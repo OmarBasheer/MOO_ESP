@@ -57,8 +57,8 @@ class BasePSO(Optimizer):
         """
         position = support_methods.pso_position_initalize(lb, ub, loc)
         position = self.amend_position(position, lb, ub, loc)
-        a = getBill(position, s)
-        b = getPAR(position, s)
+        #a = getBill(position, s)
+        #b = getPAR(position, s)
         target = self.get_target_wrapper(position, a, b, s)
         velocity = np.random.uniform(self.v_min, self.v_max)
         local_pos = deepcopy(position)
