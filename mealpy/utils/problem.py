@@ -6,8 +6,7 @@
 
 import numpy as np
 from mealpy.utils.logger import Logger
-
-
+from support_methods import *
 class Problem:
     """
     Define the mathematical form of optimization problem
@@ -163,7 +162,11 @@ class Problem:
                 self.logger.error("Please enter your 'amend_position' as a callable function, and it needs to return amended solution.")
                 exit(0)
         tested_solution = self.amend_position(tested_solution, self.lb, self.ub, self.loc)
-        result = self.fit_func(tested_solution, kwargs["a"], kwargs["b"], kwargs["s"])
+        eb = getBill(tested_solution, kwargs["s"])
+        par = getPAR(tested_solution, kwargs["s"])
+        wtr = getWTR(tested_solution, kwargs["s"])
+        cpr = getCPR(tested_solution, kwargs["s"])
+        result = self.fit_func(eb, par, wtr, cpr, kwargs["a"], kwargs["b"])
         #result = self.fit_func(tested_solution)
         if isinstance(result, list) or isinstance(result, np.ndarray):
             self.n_objs = len(result)

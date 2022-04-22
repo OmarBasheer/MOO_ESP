@@ -116,7 +116,11 @@ class Optimizer:
         Returns:
             [fitness, [obj1, obj2,...]]
         """
-        objs = self.problem.fit_func(position, a, b, s)
+        eb = getBill(position, s)
+        par = getPAR(position, s)
+        wtr = getWTR(position, s)
+        cpr = getCPR(position, s)
+        objs = self.problem.fit_func(eb, par, wtr, cpr, a, b)
         if not self.problem.obj_is_list:
             objs = [objs]
         fit = np.dot(objs, self.problem.obj_weights)
