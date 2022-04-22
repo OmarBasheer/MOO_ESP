@@ -49,9 +49,9 @@ def getBill(app_st, s=None):
             consumption_per_min[y] += ps[x]
     for i in range(len(consumption_per_min)): # loop from 0 - 1439
         if consumption_per_min[i] > c:
-            total_cost += price[i] * consumption_per_min[i] * l
+            total_cost += (price[i] * consumption_per_min[i] * l)
         else:
-            total_cost += price[i] * consumption_per_min[i]
+            total_cost += (price[i] * consumption_per_min[i])
     return total_cost
 
 def getConsumptionMatrix(app_st):
@@ -236,7 +236,7 @@ def getWTR(app_st, s=None):
     return val1 / val2
 
 
-## fixed
+
 def getCPR(app_st, s=None):
     nsa, pns = getnsa()
     c = 0.0333
@@ -248,7 +248,7 @@ def getCPR(app_st, s=None):
     price = getPricePerMin(s)
     total_cpr = 0
     for x in range(len(app_st)):
-        test = np.rint(app_st[x]).astype("int32")
+        test = np.rint(app_st[x]).astype(int)
         for y in range(test, test+loc[x]):
             consumption_per_min[y] += cost[x]
     for i in range(len(consumption_per_min)):
@@ -264,7 +264,7 @@ def getconsumptionpermin():
 
 
 def getUC(wtr, cpr):
-    return (1 - (wtr + cpr / 2)) * 100
+    return (1 - ((wtr + cpr) / 2)) * 100
 
 
 def getPAR(app_st, s=None):
@@ -275,7 +275,7 @@ def getPAR(app_st, s=None):
     price = getPricePerMin(s)
     total_cost = 0
     for x in range(len(lb)):
-        test = np.rint(app_st[x]).astype("int32")
+        test = np.rint(app_st[x]).astype(int)
         for y in range(test, test+loc[x]):
             consumption_per_min[y] += cost[x]
     ps_max = np.max(consumption_per_min)
@@ -284,7 +284,7 @@ def getPAR(app_st, s=None):
 
 
 def multiobjective(eb, par, wtr, cpr, a, b):
-    return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr # cost for the initial solution are a & b
+    return (0.4 * (eb/(eb+a))) + (0.2 * (par/(par+b))) + (0.2 * wtr) + (0.2 * cpr) # cost for the initial solution are a & b
 
 
 def objfun(app_st, a, b, s=None):
@@ -292,7 +292,8 @@ def objfun(app_st, a, b, s=None):
     par = getPAR(app_st, s)
     wtr = getWTR(app_st, s)
     cpr = getCPR(app_st, s)
-    return 0.4 * (eb/eb+a) + 0.2 * (par/par+b) + 0.2 * wtr + 0.2 * cpr
+    obj = (0.4 * (eb/(eb+a)) + 0.2 * (par/(par+b)) + (0.2 * wtr) + (0.2 * cpr))
+    return obj
 
 
 def position_initalize(p_num, lb, ub, loc):

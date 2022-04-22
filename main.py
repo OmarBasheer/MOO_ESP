@@ -1,26 +1,11 @@
-from random import randint
-
-import psoo
-import ssa
 from support_methods import *
-#import matplotlib.pyplot as plt
 import numpy as np
 from mealpy.swarm_based.SSA import BaseSSA
 from mealpy.swarm_based.PSO import BasePSO
-from mealpy.utils.visualize import *
-
-
-class A:
-    def __init__(self, x):
-        self.x = x
-
-    def __str__(self):
-        return f"{self.x}"
 
 ###############
-from psoe import PSOE
 for x in range(1, 8):
-    for i in range(1, 6):
+    for i in range(1, 16):
         ###
         scenario = x
         ###
@@ -58,13 +43,13 @@ for x in range(1, 8):
             "b": b,
             "s": scenario
         }
-        epoch = 5
+        epoch = 750
         pop_size = 20
         ST = 0.8
         PD = 0.2
         SD = 0.1
-        c1 = 1
-        c2 = 1
+        c1 = 2.05
+        c2 = 2.05
         w_min = 0.4
         w_max = 0.9
 
@@ -145,7 +130,7 @@ for x in range(1, 8):
                        "\n PSO Electricity Price: ", str(eb_sumPSO),
                        "\n PSO PAR: ", str(par_valPSO),
                        "\n PSO WTR avg: ", str(wtr_avg_valPSO),
-                       "\n PSO CPR value: ", str(eb_sumPSO),
+                       "\n PSO CPR value: ", str(cpr_valPSO),
                        "\n PSO UC value: ", str(ucPSO),
                        "\n PSO multi-objective value: ", str(lastvalPSO)]
             file.writelines(content)
