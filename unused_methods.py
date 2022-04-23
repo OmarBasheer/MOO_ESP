@@ -137,3 +137,7 @@ def getBill(x):
 #print("SSA CPR value is: ", cpr_valssa)
 #print("SSA uc val is:", ucssa)
 #print("SSA Minimum obtained:", fMin)
+
+def getconsumptionpermin():
+    main.consumption_mins.sort()
+    return main.consumption_per_min

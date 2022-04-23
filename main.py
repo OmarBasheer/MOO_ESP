@@ -5,7 +5,7 @@ from mealpy.swarm_based.PSO import BasePSO
 
 ###############
 for x in range(1, 8):
-    for i in range(1, 16):
+    for i in range(1, 2):
         ###
         scenario = x
         ###
@@ -43,7 +43,7 @@ for x in range(1, 8):
             "b": b,
             "s": scenario
         }
-        epoch = 750
+        epoch = 5
         pop_size = 20
         ST = 0.8
         PD = 0.2

@@ -26,7 +26,7 @@ def SSA(pop, lb, ub, loc, M, c, d, dim, f):
         par = getPAR(X[i, :])
         cpr = getCPR(X[i, :])
         wtr = getWTR(X[i, :])
-        fit[i, 0] = f(cost, par, wtr, cpr, initialEB, initialPAR)
+        fit[i, 0] = f(X[i, :])
 
 
     pFit = fit
@@ -53,7 +53,7 @@ def SSA(pop, lb, ub, loc, M, c, d, dim, f):
                 par = getPAR(X[sortIndex[0, i], :])
                 cpr = getCPR(X[sortIndex[0, i], :])
                 wtr = getWTR(X[sortIndex[0, i], :])
-                fit[sortIndex[0, i], 0] = f(cost, par, wtr, cpr, initialEB, initialPAR)
+                fit[sortIndex[0, i], 0] = f(X[sortIndex[0, i], :])
         elif r2 >= 0.6:
             for i in range(pNum):
                 Q = np.random.rand(1)
@@ -63,7 +63,7 @@ def SSA(pop, lb, ub, loc, M, c, d, dim, f):
                 par = getPAR(X[sortIndex[0, i], :])
                 cpr = getCPR(X[sortIndex[0, i], :])
                 wtr = getWTR(X[sortIndex[0, i], :])
-                fit[sortIndex[0, i], 0] = f(cost, par, wtr, cpr, initialEB, initialPAR)
+                fit[sortIndex[0, i], 0] = f(X[sortIndex[0, i], :])
                 bestII = np.argmin(fit[:, 0])
         bestXX = X[bestII, :]
 
@@ -81,7 +81,7 @@ def SSA(pop, lb, ub, loc, M, c, d, dim, f):
             par = getPAR(X[sortIndex[0, i], :])
             cpr = getCPR(X[sortIndex[0, i], :])
             wtr = getWTR(X[sortIndex[0, i], :])
-            fit[sortIndex[0, i], 0] = f(cost, par, wtr, cpr, initialEB, initialPAR)
+            fit[sortIndex[0, i], 0] = f(X[sortIndex[0, i], :])
         arrc = np.arange(len(sortIndex[0, :]))
 
         c = np.random.permutation(arrc)  # 随机排列序列
@@ -97,7 +97,7 @@ def SSA(pop, lb, ub, loc, M, c, d, dim, f):
             par = getPAR(X[sortIndex[0, b[j]]])
             cpr = getCPR(X[sortIndex[0, b[j]]])
             wtr = getWTR(X[sortIndex[0, b[j]]])
-            fit[sortIndex[0, b[j]]] = f(cost, par, wtr, cpr, initialEB, initialPAR)
+            fit[sortIndex[0, b[j]]] = f(X[sortIndex[0, b[j]]])
         for i in range(pop):
             if fit[i, 0] < pFit[i, 0]:
                 pFit[i, 0] = fit[i, 0]
