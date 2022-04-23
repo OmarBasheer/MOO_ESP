@@ -237,11 +237,11 @@ def getWTR(app_st, s=None):
 
 def getCPR(app_st, s=None):
     nsa, pns = getnsa()
-    loc, lb, ub, cost = getAppliances(s)
+    loc, lb, ub, ps = getAppliances(s)
     consumption_per_min = np.zeros(1440)
     for x in range(len(app_st)):
         for y in range(app_st[x], app_st[x]+loc[x]):
-            consumption_per_min[y] += cost[x]
+            consumption_per_min[y] += ps[x]
     c = 0.0333
     q = len(nsa)
     n = 1440

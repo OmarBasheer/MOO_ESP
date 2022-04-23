@@ -43,7 +43,7 @@ for x in range(1, 8):
             "b": b,
             "s": scenario
         }
-        epoch = 5
+        epoch = 750
         pop_size = 20
         ST = 0.8
         PD = 0.2
