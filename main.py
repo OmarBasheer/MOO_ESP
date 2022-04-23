@@ -43,7 +43,7 @@ for x in range(1, 8):
             "b": b,
             "s": scenario
         }
-        epoch = 750
+        epoch = 5
         pop_size = 20
         ST = 0.8
         PD = 0.2
@@ -51,7 +51,7 @@ for x in range(1, 8):
         c1 = 2.05
         c2 = 2.05
         w_min = 0.4
-        w_max = 0.9
+        w_max = 1
 
         model = BaseSSA(problem_dict1, epoch, pop_size, ST, PD, SD, a=a, b=b, s=scenario)
         best_position, best_fitness = model.solve()
